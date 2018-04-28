@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Inscription - Proact'IF</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/firstStyle.css"/>
+    </head>
+    <body>
+        <form method="POST" action="./ActionServlet">
+            <div>
+                <fieldset>
+                    <legend>Inscription</legend>
+                    <div>Civilité : <input type="radio" name="Civilite" value="H"/>Monsieur
+                        <input type="radio" name="Civilite" value="F"/>Madame</div>
+                    <div><input name="action" type="hidden" value="signup" /></div>
+                    <div>Nom : <input type="text" name="Nom"></div>
+                    <div>Prénom : <input type="text" name="Prenom"></div>
+                    <div>Adresse email : <input type="email" name="Mail"></div>
+                    <div>Téléphone : <input type="number" name="Telephone"></div>
+                    <div>Date de naissance : <input type="date" name="DateNaissance"></div>
+                    <div>Ville : <input type="text" name="Ville"></div>
+                    <div>Code postal : <input type="number" name="CodePostal"></div>
+                    <div>Rue et numéro : <textarea name="Adresse"></textarea></div>
+                    <div>Complément d'adresse : <textarea name="ComplementAdresse"></textarea></div>
+                    <div>Mot de passe : <input type="password" name="MotDePasse"></div>
+                    <div>Confirmation du mot de passe : <input type="password" name="ConfirmationMDP"></div>
+                    <div><input type="checkbox" name="CGV" value="CGV"/>J'ai lu et j'accepte les Conditions Générales de Vente</div>
+                    <div><input type="checkbox" name="NotRobot" value="NotRobot"/>Je ne suis pas un robot</div>
+                    <div><input type="submit" value="Valider l'inscription"></div>
+                </fieldset>
+            </div>
+        </form>
+    </body>
+</html>

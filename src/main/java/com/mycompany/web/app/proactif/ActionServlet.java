@@ -11,15 +11,19 @@ import com.google.gson.JsonObject;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import modele.Adresse;
 import modele.Client;
 import modele.Employe;
 import modele.Personne;
+import modele.Client;
 import service.ServiceConciergerie;
 
 /**
@@ -59,28 +63,51 @@ public class ActionServlet extends HttpServlet {
         
         HttpSession sess = request.getSession(true);
         Personne p = (Personne) sess.getAttribute("personne");
-        
         //Vérification que l individu est connecté, sinon redirection vers la page de connexion
-        if(p==null)
+        if(p==null && !todo.equals("signup"))
         {
             getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
             return;
         }
 
-
-        if(todo.equals("login"))
+        switch(todo)
         {
-            Personne newConn = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
-            sess.setAttribute("personne", p);
-            if(p.getClass() == Client.class)
-            {
-                getServletContext().getRequestDispatcher("AccueilClient.html").forward(request, response);
-            }
-            else if(p.getClass() == Employe.class)
-            {
-                getServletContext().getRequestDispatcher("AccueilEmploye.html").forward(request, response);
-            }
+            case "login" :
+                Personne newConn = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
+                sess.setAttribute("personne", p);
+                if(p.getClass() == Client.class)
+                {
+                    getServletContext().getRequestDispatcher("./AccueilClient.html").forward(request, response);
+                }
+                else if(p.getClass() == Employe.class)
+                {
+                    getServletContext().getRequestDispatcher("./AccueilEmploye.html").forward(request, response);
+                }
+                
+            case "signup" :
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date d = new Date();
+                try
+                {
+                    d = sdf.parse(request.getParameter("DateNaissance"));
+                }catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                Adresse adrr = new Adresse(request.getParameter("Ville"), Integer.parseInt(request.getParameter("CodePostal")), request.getParameter("Adresse"), request.getParameter("ComplementAdresse"));
+                Client cli = new Client(request.getParameter("Nom"), request.getParameter("Prenom"), request.getParameter("Civilite").charAt(0), 
+                                        request.getParameter("Mail"), request.getParameter("MotDePasse"), d, request.getParameter("Telephone"), adrr);
+                try
+                {
+                    srv.inscrireClient(cli);
+                }catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                sess.setAttribute("personne", (Personne)cli);
+                getServletContext().getRequestDispatcher("./AccueilClient.html").forward(request, response);
         }
+            
 
     }
 

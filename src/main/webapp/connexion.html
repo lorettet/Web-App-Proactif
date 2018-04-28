@@ -9,23 +9,25 @@ and open the template in the editor.
         <title>Connexion - Proact'IF</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script>
-            function connexion()
-            {
-                alert("TODO : analyser la connexion");
-                return false;
-            }
-        </script>
+        <link rel="stylesheet" href="./css/firstStyle.css"/>
     </head>
     <body>
-        <form onsubmit="return connexion();">
-           <fieldset>
-                <legend>Connexion</legend>
-                <input type="text" name="mail" placeholder="Mail">
-                <input type="password" name="password" placeholder="Password">
-                <input type="submit" value="Connexion">
-            </fieldset> 
+        <form method="POST" action="./ActionServlet">
+            <div>
+                <fieldset>
+                    <legend>Connexion</legend>
+                    <div><input name="action" type="hidden" value="login" /></div>
+                    <div><input type="email" name="mail" placeholder="Mail"></div>
+                    <div><input type="password" name="password" placeholder="Password"></div>
+                    <div><input type="submit" value="Valider"></div>
+                </fieldset>
+            </div>
+            <div>
+                <fieldset>
+                    Pas encore de compte client ?
+                    <div><a href="./inscription.html">Inscrivez-vous !</a></div>
+                </fieldset>
+            </div>
         </form>
-        
     </body>
 </html>
