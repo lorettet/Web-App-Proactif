@@ -64,8 +64,9 @@ public class ActionServlet extends HttpServlet {
         HttpSession sess = request.getSession(true);
         Personne p = (Personne) sess.getAttribute("personne");
         //Vérification que l individu est connecté, sinon redirection vers la page de connexion
-        if(p==null && !todo.equals("signup"))
+        if(p==null && !todo.equals("signup") && !todo.equals("login"))
         {
+            System.out.println("sess pas ok");
             getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
             return;
         }
@@ -73,16 +74,30 @@ public class ActionServlet extends HttpServlet {
         switch(todo)
         {
             case "login" :
-                Personne newConn = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
-                sess.setAttribute("personne", p);
-                if(p.getClass() == Client.class)
+                System.out.println("login");
+                Personne newP = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
+                if(newP == null)
                 {
-                    getServletContext().getRequestDispatcher("./AccueilClient.html").forward(request, response);
-                }
-                else if(p.getClass() == Employe.class)
+                    System.out.println("log failed");
+                    response.getWriter().println("failed");
+//                    getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
+                }else if(p != null && !newP.getEmail().equals(p.getEmail()))
                 {
-                    getServletContext().getRequestDispatcher("./AccueilEmploye.html").forward(request, response);
+                    System.out.println("new personne");
+                    sess.setAttribute("personne", newP);
+                    if(newP.getClass() == Client.class)
+                    {
+                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+                    }
+                    else if(newP.getClass() == Employe.class)
+                    {
+                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+                    }
+                }else
+                {
+                    System.out.println("already registered");
                 }
+                break;
                 
             case "signup" :
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -100,12 +115,15 @@ public class ActionServlet extends HttpServlet {
                 try
                 {
                     srv.inscrireClient(cli);
+                    sess.setAttribute("personne", (Personne)cli);
+                    getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                 }catch(Exception e)
                 {
+                    getServletContext().getRequestDispatcher("/inscription.html").forward(request, response);
                     e.printStackTrace();
                 }
-                sess.setAttribute("personne", (Personne)cli);
-                getServletContext().getRequestDispatcher("./AccueilClient.html").forward(request, response);
+                
+                
         }
             
 
