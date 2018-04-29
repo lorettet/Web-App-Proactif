@@ -12,22 +12,57 @@ and open the template in the editor.
         <link rel="stylesheet" href="./css/firstStyle.css"/>
     </head>
     <body>
-        <form method="POST" action="./ActionServlet">
+        <div><input id="deconnection" type="submit" value="Déconnection"></div>
+        <form id="formulaire" method="POST" action="./ActionServlet">
             <div>
-                <fieldset>
+                <fieldset >
                     <legend>Connexion</legend>
                     <div><input name="action" type="hidden" value="login" /></div>
-                    <div><input type="email" name="mail" placeholder="Mail"></div>
-                    <div><input type="password" name="password" placeholder="Password"></div>
-                    <div><input type="submit" value="Valider"></div>
+                    <div><input type="email" name="mail" placeholder="Adresse email" required="required"></div>
+                    <div><input type="password" name="password" placeholder="Mot de passe" required="required"></div>
+                    <div id="submit"><input type="submit" value="Valider"></div>
                 </fieldset>
             </div>
+        </form>
             <div>
                 <fieldset>
                     Pas encore de compte client ?
                     <div><a href="./inscription.html">Inscrivez-vous !</a></div>
                 </fieldset>
             </div>
-        </form>
+        
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script>
+            $(function(){
+                $('#formulaire').submit( function(event){
+                    $.ajax({
+                    url: $('#formulaire').attr('action'),
+                    type: 'POST',
+                    data: $('#formulaire').serialize(), 
+                }).done(function(data){
+                        if(data === "okClient"){
+                            window.location =  "./index.html";
+                        }else if(data === "okEmployé"){
+                            window.location = "./index.html";
+                        }else{
+                            if(document.getElementById('errorField')){
+                                $("#errorField").html("<fieldset>"+data+"</fieldset>");
+                            }else {
+                                $("#submit").append("<div id='errorField'><fieldset>"+data+"</fieldset></div>");
+                            }
+                        }
+                    });
+                    event.preventDefault();
+                });
+                $('#deconnection').click( function(){
+                    alert("deco");
+                    $.ajax({
+                        url: './ActionServlet',
+                        type: 'POST',
+                        data: {action : 'deconnection'},
+                    })
+                })
+            });
+        </script>
     </body>
 </html>
