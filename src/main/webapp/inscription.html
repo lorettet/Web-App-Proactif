@@ -53,15 +53,16 @@ and open the template in the editor.
                     url: $('#formulaire').attr('action'),
                     type: 'POST',
                     data: $('#formulaire').serialize(), 
+                    dataType: 'json'
                 }).done(function(data){
-                        if(data === "ok"){
+                        if(data.inscrit === "ok"){
                             alert("Vous êtes enregistré, veuillez vous connecter");
                             window.location =  "./connexion.html";
                         }else{
                             if(document.getElementById('errorField')){
-                                $("#errorField").html("<fieldset>"+data+"</fieldset>");
+                                $("#errorField").html("<fieldset>"+data.error+"</fieldset>");
                             }else {
-                                $("#formulaire").prepend("<div id='errorField'><fieldset>"+data+"</fieldset></div>");
+                                $("#formulaire").prepend("<div id='errorField'><fieldset>"+data.error+"</fieldset></div>");
                             }
                         }
                     });
