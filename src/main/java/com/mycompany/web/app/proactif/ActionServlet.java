@@ -7,14 +7,15 @@ package com.mycompany.web.app.proactif;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.json.Json;
-import javax.json.JsonObject;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
@@ -26,6 +27,10 @@ import modele.Client;
 import modele.Employe;
 import modele.Personne;
 import modele.Client;
+import modele.Intervention;
+import modele.InterventionAnimal;
+import modele.InterventionIncident;
+import modele.InterventionLivraison;
 import service.ServiceConciergerie;
 import service.ServiceException;
 
@@ -42,6 +47,11 @@ public class ActionServlet extends HttpServlet {
     public void init()
     {
         JpaUtil.init();
+        try {
+            srv.creerEmployes();
+        } catch (ServiceException ex) {
+            Logger.getLogger(ActionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
@@ -143,6 +153,52 @@ public class ActionServlet extends HttpServlet {
 //                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().println("lol");
+                break;
+            case "AccueilEmploye":
+                List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
+                Intervention theIntervention = null;
+                for(Intervention inter : interventions)
+                {
+                    if(inter.getEmploye() == p)
+                    {
+                        if(inter.getFin() == null)
+                        {
+                            theIntervention = inter;
+                            break;
+                        }
+                    }
+                }
+                JsonObject joMain = new JsonObject();
+                JsonObject jb = new JsonObject();
+                if(theIntervention != null)
+                {
+                    jb.addProperty("type",theIntervention.getTypeLabel());
+                    jb.addProperty("status", theIntervention.getStatus());
+                    jb.addProperty("description",theIntervention.getDescription());
+                    if(theIntervention.getClass() == InterventionAnimal.class)
+                    {
+                        String typeAnimal = ((InterventionAnimal)theIntervention).getTypeAnimal();
+                        jb.addProperty("typeAnimal",typeAnimal);
+                    }
+                    else if(theIntervention.getClass() == InterventionLivraison.class)
+                    {
+                        
+                    }
+                    else if(theIntervention.getClass() == InterventionIncident.class)
+                    {
+                        
+                    }
+                    joMain.add("intervention", jb);
+                }
+                
+                
+                JsonObject joEmpInf = new JsonObject();
+                joEmpInf.addProperty("prénom", p.getPrenom());
+                joEmpInf.addProperty("nom", p.getNom());
+                joMain.add("employe", joEmpInf);
+                response.setContentType("application/json");
+                response.getWriter().println(joMain.toString());
+
                 break;
         }
             

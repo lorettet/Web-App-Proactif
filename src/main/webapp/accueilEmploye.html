@@ -12,5 +12,18 @@ and open the template in the editor.
     </head>
     <body>
         <div>TODO write content</div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script>
+        $(function(){
+            $.ajax({
+                    url: './ActionServlet',
+                    type: 'POST',
+                    data: {action : "AccueilEmploye"}, 
+                }).done(function(data){
+                    $('div').html(data.employe.nom);
+                })
+        });
+    </script>
     </body>
+
 </html>
