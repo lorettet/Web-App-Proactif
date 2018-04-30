@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
@@ -72,6 +73,12 @@ public class ActionServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject joSess = new JsonObject();
+        
         String todo = request.getParameter("action");
         
         HttpSession sess = request.getSession(true);
@@ -80,7 +87,9 @@ public class ActionServlet extends HttpServlet {
         if(p==null && !todo.equals("signup") && !todo.equals("login"))
         {
             System.out.println("sess pas ok"+p);
-            getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
+            joSess.addProperty("sess", "pasok");
+            response.getWriter().print(gson.toJson(joSess));
+//            getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
             return;
         }
 
@@ -97,25 +106,29 @@ public class ActionServlet extends HttpServlet {
                 if(newP == null)//authentication failed
                 {
                     System.out.println("log failed");
-                    response.getWriter().println("Les identifiants entrés sont incorrects");
+                    joSess.addProperty("error", "Les identifiants entrés sont incorrects");
+                    response.getWriter().println(gson.toJson(joSess));
                 }else if(p == null || (p != null && !newP.getEmail().equals(p.getEmail())))//authentication succeeded
                 {
                     System.out.println("new personne");
                     sess.setAttribute("personne", newP);
                     if(newP.getClass() == Client.class)
                     {
-                        response.getWriter().print("okClient");
+                        joSess.addProperty("log", "okClient");
+                        response.getWriter().println(gson.toJson(joSess));
 //                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                     }
                     else if(newP.getClass() == Employe.class)
                     {
-                        response.getWriter().print("okEmployé");
+                        joSess.addProperty("log", "okEmployé");
+                        response.getWriter().println(gson.toJson(joSess));
 //                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                     }
                 }else//already registered
                 {
                     System.out.println("already registered");
-                    response.getWriter().println("Vous êtes déjà connecté");
+                    joSess.addProperty("error", "Vous êtes déjà connecté");
+                    response.getWriter().println(gson.toJson(joSess));
                 }
                 break;
                 
@@ -136,23 +149,24 @@ public class ActionServlet extends HttpServlet {
                 {
                     srv.inscrireClient(cli);
 //                    sess.setAttribute("personne", (Personne)cli);
-                    response.getWriter().print("ok");
+                    joSess.addProperty("inscrit", "ok");
+                    response.getWriter().println(gson.toJson(joSess));
 //                    getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                 }catch(ServiceException e)
                 {
 //                    getServletContext().getRequestDispatcher("/inscription.html").forward(request, response);
-                    response.getWriter().print(e.getMessage());
+                    joSess.addProperty("error", e.getMessage());
+                    response.getWriter().println(gson.toJson(joSess));
                 }
                 break;
                 
             case "AccueilClient" :
-//                JsonObject jo = Json.createObjectBuilder()
-//                        .add("prénom", p.getPrenom())
-//                        .add("nom", p.getNom())
-//                        .build();
-//                response.setContentType("application/json");
+                JsonObject jo = new JsonObject();
+                jo.addProperty("prénom", p.getPrenom());
+                jo.addProperty("nom", p.getNom());
+                response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().println("lol");
+                response.getWriter().println(gson.toJson(jo));
                 break;
             case "AccueilEmploye":
                 List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();

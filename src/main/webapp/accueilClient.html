@@ -11,7 +11,16 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>TODO write content</div>
+        <div id="bonjour"></div>
+        <div>
+            Ce n'est pas vous ?
+            <a href='' onclick='javascript:deco();'>Déconnexion</a>
+        </div>
+        <div>
+            <button id="accueilBut">Accueil</button>
+            <button id="newDemandeBut">Nouvelle Demande</button>
+            <button id="histDemandeBut">Historique des demandes</button>
+        </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script>
         $(function(){
@@ -19,10 +28,26 @@ and open the template in the editor.
                     url: './ActionServlet',
                     type: 'POST',
                     data: {action : "AccueilClient"}, 
+                    dataType: 'json',
                 }).done(function(data){
-                    $('div').html(data);
+                    if(data.sess === 'pasok'){
+                        window.location = "./connexion.html";
+                        return;
+                    }
+                    document.getElementById("accueilBut").focus();
+                    $('#bonjour').html("Bonjour "+data.prénom+" "+data.nom+" !");
                 })
         });
+        function deco(){
+                    alert("deco");
+                    $.ajax({
+                        url: './ActionServlet',
+                        type: 'POST',
+                        data: {action : 'deconnection'},
+                    }).done(function(){
+                        window.location = "./connexion.html";
+                    })
+                }
     </script>
     </body>
 </html>

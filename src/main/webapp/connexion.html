@@ -39,18 +39,19 @@ and open the template in the editor.
                     url: $('#formulaire').attr('action'),
                     type: 'POST',
                     data: $('#formulaire').serialize(), 
+                    dataType: 'json'
                 }).done(function(data){
-                        if(data === "okClient"){
+                        if(data.log === "okClient"){
                             alert("Vous êtes connecté");
                             window.location =  "./accueilClient.html";
-                        }else if(data === "okEmployé"){
+                        }else if(data.log === "okEmployé"){
                             alert("Vous êtes connecté");
                             window.location = "./accueilEmploye.html";
                         }else{
                             if(document.getElementById('errorField')){
-                                $("#errorField").html("<fieldset>"+data+"</fieldset>");
+                                $("#errorField").html("<fieldset>"+data.error+"</fieldset>");
                             }else {
-                                $("#submit").append("<div id='errorField'><fieldset>"+data+"</fieldset></div>");
+                                $("#submit").append("<div id='errorField'><fieldset>"+data.error+"</fieldset></div>");
                             }
                         }
                     });
