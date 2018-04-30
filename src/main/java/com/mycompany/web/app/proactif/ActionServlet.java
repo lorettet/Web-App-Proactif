@@ -7,12 +7,14 @@ package com.mycompany.web.app.proactif;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
@@ -25,6 +27,7 @@ import modele.Employe;
 import modele.Personne;
 import modele.Client;
 import service.ServiceConciergerie;
+import service.ServiceException;
 
 /**
  *
@@ -66,36 +69,43 @@ public class ActionServlet extends HttpServlet {
         //Vérification que l individu est connecté, sinon redirection vers la page de connexion
         if(p==null && !todo.equals("signup") && !todo.equals("login"))
         {
-            System.out.println("sess pas ok");
+            System.out.println("sess pas ok"+p);
             getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
             return;
         }
 
         switch(todo)
         {
+            case "deconnection" :
+                System.out.println("log out");
+                sess.setAttribute("personne", null);
+                break;
+                
             case "login" :
-                System.out.println("login");
+                System.out.println("login"+p);
                 Personne newP = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
-                if(newP == null)
+                if(newP == null)//authentication failed
                 {
                     System.out.println("log failed");
-                    response.getWriter().println("failed");
-//                    getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
-                }else if(p != null && !newP.getEmail().equals(p.getEmail()))
+                    response.getWriter().println("Les identifiants entrés sont incorrects");
+                }else if(p == null || (p != null && !newP.getEmail().equals(p.getEmail())))//authentication succeeded
                 {
                     System.out.println("new personne");
                     sess.setAttribute("personne", newP);
                     if(newP.getClass() == Client.class)
                     {
-                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+                        response.getWriter().print("okClient");
+//                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                     }
                     else if(newP.getClass() == Employe.class)
                     {
-                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+                        response.getWriter().print("okEmployé");
+//                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
                     }
-                }else
+                }else//already registered
                 {
                     System.out.println("already registered");
+                    response.getWriter().println("Vous êtes déjà connecté");
                 }
                 break;
                 
@@ -115,15 +125,25 @@ public class ActionServlet extends HttpServlet {
                 try
                 {
                     srv.inscrireClient(cli);
-                    sess.setAttribute("personne", (Personne)cli);
-                    getServletContext().getRequestDispatcher("/index.html").forward(request, response);
-                }catch(Exception e)
+//                    sess.setAttribute("personne", (Personne)cli);
+                    response.getWriter().print("ok");
+//                    getServletContext().getRequestDispatcher("/index.html").forward(request, response);
+                }catch(ServiceException e)
                 {
-                    getServletContext().getRequestDispatcher("/inscription.html").forward(request, response);
-                    e.printStackTrace();
+//                    getServletContext().getRequestDispatcher("/inscription.html").forward(request, response);
+                    response.getWriter().print(e.getMessage());
                 }
+                break;
                 
-                
+            case "AccueilClient" :
+//                JsonObject jo = Json.createObjectBuilder()
+//                        .add("prénom", p.getPrenom())
+//                        .add("nom", p.getNom())
+//                        .build();
+//                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().println("lol");
+                break;
         }
             
 

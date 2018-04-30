@@ -41,9 +41,11 @@ and open the template in the editor.
                     data: $('#formulaire').serialize(), 
                 }).done(function(data){
                         if(data === "okClient"){
-                            window.location =  "./index.html";
+                            alert("Vous êtes connecté");
+                            window.location =  "./accueilClient.html";
                         }else if(data === "okEmployé"){
-                            window.location = "./index.html";
+                            alert("Vous êtes connecté");
+                            window.location = "./accueilEmploye.html";
                         }else{
                             if(document.getElementById('errorField')){
                                 $("#errorField").html("<fieldset>"+data+"</fieldset>");
