@@ -9,9 +9,32 @@ and open the template in the editor.
         <title>Accueil - Proact'IF</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            /*div{
+                border: 1px solid black
+            }
+            #info{
+                    display: flex;  
+                    flex-wrap: wrap;
+            }*/
+        </style>
     </head>
     <body>
-        <div>TODO write content</div>
+        <div id="main">
+            <div id="info">
+                <span id="type"></span>
+                <span id="date"></span>
+                <span id="status"></span>
+                <div id="description"></div>
+                <div id="client"></div>
+                <div id="adresse"></div>
+                <div id="complement"></div>
+                <div id="compInter"></div>
+            </div>
+            <div id="form">
+                
+            </div>
+        </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script>
         $(function(){
@@ -20,7 +43,29 @@ and open the template in the editor.
                     type: 'POST',
                     data: {action : "AccueilEmploye"}, 
                 }).done(function(data){
-                    $('div').html(data.employe.nom);
+                    var intervention = data.intervention;
+                    if(intervention === undefined)
+                        return;
+                    var client = intervention.client;
+                    var adresse = client.adresse;
+                    $('#type').html(intervention.type);
+                    $('#date').html(intervention.dateDebut);
+                    switch(intervention.status)
+                    {
+                        case 'E':
+                            $('#status').html("En cours...");
+                            break;
+                    }
+                    $('#description').html("Description : "+intervention.description);
+                    $('#client').html("Client : " + client.prenom + " " + client.nom + " (#" + client.id + ")");
+                    $('#adresse').html("Adresse : " + adresse.rue + ", " + adresse.codePostal + " " + adresse.ville);
+                    $('#complement').html("Complément : " + adresse.complement);
+                    switch(intervention.type)
+                    {
+                        case "Animal":
+                            $('#compInter').html("Espèce de l'animal : ");
+                            break;
+                    }
                 })
         });
     </script>

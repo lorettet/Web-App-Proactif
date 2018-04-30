@@ -173,9 +173,9 @@ public class ActionServlet extends HttpServlet {
                 Intervention theIntervention = null;
                 for(Intervention inter : interventions)
                 {
-                    if(inter.getEmploye() == p)
+                    if(inter.getEmploye().getId() == p.getId())
                     {
-                        if(inter.getFin() == null)
+                        if(inter.getStatus()=='E')
                         {
                             theIntervention = inter;
                             break;
@@ -183,16 +183,17 @@ public class ActionServlet extends HttpServlet {
                     }
                 }
                 JsonObject joMain = new JsonObject();
-                JsonObject jb = new JsonObject();
+                JsonObject joInter = new JsonObject();
                 if(theIntervention != null)
                 {
-                    jb.addProperty("type",theIntervention.getTypeLabel());
-                    jb.addProperty("status", theIntervention.getStatus());
-                    jb.addProperty("description",theIntervention.getDescription());
+                    joInter.addProperty("type",theIntervention.getTypeLabel());
+                    joInter.addProperty("status", theIntervention.getStatus());
+                    joInter.addProperty("description",theIntervention.getDescription());
+                    joInter.addProperty("dateDebut", theIntervention.getDebut().toString());
                     if(theIntervention.getClass() == InterventionAnimal.class)
                     {
                         String typeAnimal = ((InterventionAnimal)theIntervention).getTypeAnimal();
-                        jb.addProperty("typeAnimal",typeAnimal);
+                        joInter.addProperty("typeAnimal",typeAnimal);
                     }
                     else if(theIntervention.getClass() == InterventionLivraison.class)
                     {
@@ -202,7 +203,20 @@ public class ActionServlet extends HttpServlet {
                     {
                         
                     }
-                    joMain.add("intervention", jb);
+                    Client client = theIntervention.getClient();
+                    JsonObject joCli = new JsonObject();
+                    joCli.addProperty("id", client.getId());
+                    joCli.addProperty("nom",client.getNom());
+                    joCli.addProperty("prenom",client.getPrenom());
+                    JsonObject joAdresse = new JsonObject();
+                    Adresse adresse = client.getAdresse();
+                    joAdresse.addProperty("rue", adresse.getRue());
+                    joAdresse.addProperty("codePostal", adresse.getCodePostal());
+                    joAdresse.addProperty("ville", adresse.getVille());
+                    joAdresse.addProperty("complement", adresse.getComplement());
+                    joCli.add("adresse", joAdresse);
+                    joInter.add("client",joCli);
+                    joMain.add("intervention", joInter);
                 }
                 
                 
