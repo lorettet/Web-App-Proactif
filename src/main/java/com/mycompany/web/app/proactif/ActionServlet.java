@@ -7,6 +7,7 @@ package com.mycompany.web.app.proactif;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dao.JpaUtil;
 import java.io.IOException;
@@ -161,13 +162,48 @@ public class ActionServlet extends HttpServlet {
                 break;
                 
             case "AccueilClient" :
-                JsonObject jo = new JsonObject();
-                jo.addProperty("prénom", p.getPrenom());
-                jo.addProperty("nom", p.getNom());
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().println(gson.toJson(jo));
+                JsonObject joNom = new JsonObject();
+                joNom.addProperty("prénom", p.getPrenom());
+                joNom.addProperty("nom", p.getNom());
+                response.getWriter().println(gson.toJson(joNom));
                 break;
+            
+            case "clientIntervRecentes" :
+                JsonArray listeIntervs = new JsonArray();
+                List<Intervention> intervsClient = srv.obtenirInterventionsParClient((Client)p);
+                for(int nbInterv = 0; nbInterv < intervsClient.size() && nbInterv <= 3; nbInterv++)
+                {
+                    Intervention i = intervsClient.get(nbInterv);
+                    JsonObject joInterv = new JsonObject();
+                    joInterv.addProperty("type", i.getTypeLabel());
+                    joInterv.addProperty("début", i.getDebut().toString());
+                    joInterv.addProperty("status", i.getStatus());
+                    joInterv.addProperty("description", i.getDescription());
+                    joInterv.addProperty("employéNom", i.getEmploye().getNom());
+                    joInterv.addProperty("employéPrénom", i.getEmploye().getPrenom());
+//                    joInterv.addProperty("fin", i.getFin().toString());
+                    joInterv.addProperty("com", i.getCommentaire());
+                    if(i.getClass() == InterventionLivraison.class)
+                    {
+                        InterventionLivraison iL = (InterventionLivraison)i;
+                        joInterv.addProperty("typeLiv", iL.getTypeLivraison());
+                        joInterv.addProperty("compLiv", iL.getEntrepriseLivraison());
+                    }else if(i.getClass() == InterventionAnimal.class)
+                    {
+                        InterventionAnimal iA = (InterventionAnimal)i;
+                        joInterv.addProperty("typeAnimal", iA.getTypeAnimal());
+                    }else if(i.getClass() == InterventionIncident.class)
+                    {
+                        InterventionIncident iI = (InterventionIncident)i;
+//                        RAS
+                    }
+                    listeIntervs.add(joInterv);
+                }
+                JsonObject container = new JsonObject();
+                container.add("listeIntervs", listeIntervs);
+                response.getWriter().println(gson.toJson(container));
+                break;
+                
             case "AccueilEmploye":
                 List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
                 Intervention theIntervention = null;
@@ -210,7 +246,6 @@ public class ActionServlet extends HttpServlet {
                 joEmpInf.addProperty("prénom", p.getPrenom());
                 joEmpInf.addProperty("nom", p.getNom());
                 joMain.add("employe", joEmpInf);
-                response.setContentType("application/json");
                 response.getWriter().println(joMain.toString());
 
                 break;

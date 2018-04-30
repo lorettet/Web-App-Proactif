@@ -21,6 +21,9 @@ and open the template in the editor.
             <button id="newDemandeBut">Nouvelle Demande</button>
             <button id="histDemandeBut">Historique des demandes</button>
         </div>
+        <div id='content'>
+            
+        </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script>
         $(function(){
@@ -36,6 +39,7 @@ and open the template in the editor.
                     }
                     document.getElementById("accueilBut").focus();
                     $('#bonjour').html("Bonjour "+data.prénom+" "+data.nom+" !");
+                    accueil();
                 })
         });
         function deco(){
@@ -48,6 +52,26 @@ and open the template in the editor.
                         window.location = "./connexion.html";
                     })
                 }
+        function accueil(){
+            $('#content').html("<div>Vos demandes d'intervention récentes</div><div id='interventions'></div>");
+            $.ajax({
+                url: './ActionServlet',
+                type: 'POST',
+                data: {action : 'clientIntervRecentes'},
+                dataType: 'json',
+            }).done(function(data){
+                alert(data.listeIntervs[0].type);
+                for(var i=0; i<1; i++){
+                    $('#interventions:last-child').append(
+                        '<fieldset>'
+                        +data.listeIntervs[i].type+' '
+                        +data.listeIntervs[i].début+' '
+                        +data.listeIntervs[i].status+' '
+                        +'</fieldset>'
+                    );
+                }
+            })
+        }
     </script>
     </body>
 </html>
