@@ -6,66 +6,142 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>Connexion - Proact'IF</title>
+        <title>Accueil - Proact'IF</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./css/firstStyle.css"/>
+        <style>
+            
+			h1 {
+				display: inline-block;
+			}
+			#main{
+				margin-right: auto;
+				margin-left: auto;
+				margin-top: 30vh;
+				width: 40%;
+				box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+				padding:1em;
+			}
+			#deconnexion{
+				float:right;
+			}
+			#one-line-info>span{
+				margin:10%;
+			}
+
+			
+			#multi-line-info>div{
+				margin-top:5px;
+				margin-bottom:5px;
+			}
+			
+			#form{
+				margin-top: 2em;
+				padding-top: 2em;
+				border-top : 1px solid black;
+			}
+			
+			#commentaire{
+				width:50%;
+				height:5em;
+			}
+			
+			input, textarea{
+				vertical-align:top;
+			}
+			
+			label{
+				display : inline-block;
+			}
+			
+			#one-line-info{
+				text-align:center;
+			}
+			
+			#multi-line-info{
+				margin-top:1em;
+			}
+			
+			.label-multi-line-info{
+				width:40%;
+				text-align:right;
+				margin-right:1em;
+				vertical-align: top;
+			}
+			
+			#description{
+				width: 50%;
+				display: inline-block;
+				margin : 0;
+				text-align : justify;
+			}
+
+        </style>
     </head>
+	<header>
+		<h1>Proact'IF</h1>
+		<span id="nomEmp">Martin PROUTAU</span>
+		<button id="deconnexion">Deconnexion</button>
+	</header>
     <body>
-        <div><input id="deconnection" type="submit" value="Déconnection"></div>
-        <form id="formulaire" method="POST" action="./ActionServlet">
-            <div>
-                <fieldset >
-                    <legend>Connexion</legend>
-                    <div><input name="action" type="hidden" value="login" /></div>
-                    <div><input type="email" name="mail" placeholder="Adresse email" required="required"></div>
-                    <div><input type="password" name="password" placeholder="Mot de passe" required="required"></div>
-                    <div id="submit"><input type="submit" value="Valider"></div>
-                </fieldset>
-            </div>
-        </form>
-            <div>
-                <fieldset>
-                    Pas encore de compte client ?
-                    <div><a href="./inscription.html">Inscrivez-vous !</a></div>
-                </fieldset>
-            </div>
-        
-        <script src="http://code.jquery.com/jquery.js"></script>
-        <script>
-            $(function(){
-                $('#formulaire').submit( function(event){
-                    $.ajax({
-                    url: $('#formulaire').attr('action'),
+        <div id="main">
+            <div id="info">
+				<div id="one-line-info">
+					<span id="type">Animal</span>
+					<span id="date">27/02/2018</span>
+					<span id="status">En cours...</span>
+				</div>
+				<div id="multi-line-info">
+					<div><label class="label-multi-line-info">Description : </label><p id="description">Mon chine est mort lel je teste de marquer plein dde truc voir si ca fait de lamerde our pas mais franchement jespere pas</p></div>
+					<div><label class="label-multi-line-info">Client : </label><span id="client">Théo Lorette-Froidevaux</span></div>
+					<div><label class="label-multi-line-info">Adresse : </label><span id="adresse">29 rue de la joie, 69000 Lyon</span></div>
+					<div><label class="label-multi-line-info">Complément : </label><span id="complement">Y en a pas</span></div>
+					<div><label class="label-multi-line-info">Espèce de l'animal : </label><span id="compInter">chien</span></div>
+				</div>
+            <form id="form">
+                <textarea id="commentaire" placeholder="commentaire"></textarea>
+					<input type="radio" name="cdr" id="ok">
+					<label for="ok">Succes</label>
+
+					<input type="radio" name="cdr" id="nok">
+					<label for="nok">Probleme</label>
+				<input type="submit" value="Terminé l'intervention">
+            </form>
+        </div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script>
+        $(function(){
+            $.ajax({
+                    url: './ActionServlet',
                     type: 'POST',
-                    data: $('#formulaire').serialize(), 
-                    dataType: 'json'
+                    data: {action : "AccueilEmploye"}, 
                 }).done(function(data){
-                        if(data.log === "okClient"){
-                            alert("Vous êtes connecté");
-                            window.location =  "./accueilClient.html";
-                        }else if(data.log === "okEmployé"){
-                            alert("Vous êtes connecté");
-                            window.location = "./accueilEmploye.html";
-                        }else{
-                            if(document.getElementById('errorField')){
-                                $("#errorField").html("<fieldset>"+data.error+"</fieldset>");
-                            }else {
-                                $("#submit").append("<div id='errorField'><fieldset>"+data.error+"</fieldset></div>");
-                            }
-                        }
-                    });
-                    event.preventDefault();
-                });
-                $('#deconnection').click( function(){
-                    alert("deco");
-                    $.ajax({
-                        url: './ActionServlet',
-                        type: 'POST',
-                        data: {action : 'deconnection'},
-                    })
+                    var intervention = data.intervention;
+                    if(intervention === undefined)
+                        return;
+                    var client = intervention.client;
+                    var adresse = client.adresse;
+                    $('#type').html(intervention.type);
+                    $('#date').html(intervention.dateDebut);
+                    switch(intervention.status)
+                    {
+                        case 'E':
+                            $('#status').html("En cours...");
+                            break;
+                    }
+                    $('#description').html("Description : "+intervention.description);
+                    $('#client').html("Client : " + client.prenom + " " + client.nom + " (#" + client.id + ")");
+                    $('#adresse').html("Adresse : " + adresse.rue + ", " + adresse.codePostal + " " + adresse.ville);
+                    $('#complement').html("Complément : " + adresse.complement);
+                    switch(intervention.type)
+                    {
+                        case "Animal":
+                            $('#compInter').html("Espèce de l'animal : ");
+                            break;
+                    }
                 })
-            });
-        </script>
+        });
+    </script>
     </body>
+
 </html>
