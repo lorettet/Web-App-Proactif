@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.web.app.proactif;
+package com.mycompany.web.app.proactif.action;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mycompany.web.app.proactif.vue.VueConnexion;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -102,7 +103,9 @@ public class ActionServlet extends HttpServlet {
                 break;
                 
             case "login" :
-                System.out.println("login"+p);
+                new ActionConnexion(request).exec();
+                new VueConnexion(request, response).exec();
+/*                System.out.println("login"+p);
                 Personne newP = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
                 if(newP == null)//authentication failed
                 {
@@ -131,7 +134,7 @@ public class ActionServlet extends HttpServlet {
                     joSess.addProperty("error", "Vous êtes déjà connecté");
                     response.getWriter().println(gson.toJson(joSess));
                 }
-                break;
+ */               break;
                 
             case "signup" :
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

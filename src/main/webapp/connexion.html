@@ -33,6 +33,14 @@ and open the template in the editor.
         
         <script src="http://code.jquery.com/jquery.js"></script>
         <script>
+            function setErrorField(error)
+            {
+                if(document.getElementById('errorField')){
+                    $("#errorField").html("<fieldset>"+error+"</fieldset>");
+                }else {
+                    $("#submit").append("<div id='errorField'><fieldset>"+error+"</fieldset></div>");
+                }
+            }
             $(function(){
                 $('#formulaire').submit( function(event){
                     $.ajax({
@@ -41,18 +49,28 @@ and open the template in the editor.
                     data: $('#formulaire').serialize(), 
                     dataType: 'json'
                 }).done(function(data){
-                        if(data.log === "okClient"){
-                            alert("Vous êtes connecté");
-                            window.location =  "./accueilClient.html";
-                        }else if(data.log === "okEmployé"){
-                            alert("Vous êtes connecté");
-                            window.location = "./accueilEmploye.html";
-                        }else{
-                            if(document.getElementById('errorField')){
-                                $("#errorField").html("<fieldset>"+data.error+"</fieldset>");
-                            }else {
-                                $("#submit").append("<div id='errorField'><fieldset>"+data.error+"</fieldset></div>");
+                        if(data.connected === "already")
+                        {
+                            var error = "Vous êtes déjà connecté";
+                            setErrorField(error);
+                        }
+                        else if(data.connected === "true")
+                        {
+                            if(data.type === "client")
+                            {
+                                alert("Vous êtes connecté");
+                                window.location =  "./accueilClient.html";
                             }
+                            else if(data.type === "employe")
+                            {
+                                alert("Vous êtes connecté");
+                                window.location = "./accueilEmploye.html";
+                            }
+                        }
+                        else if(data.connected === "false")
+                        {
+                            var error = "Identifiant ou mot de passe incorrect";
+                            setErrorField(error);
                         }
                     });
                     event.preventDefault();
