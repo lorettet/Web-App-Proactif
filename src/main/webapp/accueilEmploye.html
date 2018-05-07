@@ -96,7 +96,6 @@ and open the template in the editor.
 					<div><label class="label-multi-line-info">Client : </label><span id="client">Théo Lorette-Froidevaux</span></div>
 					<div><label class="label-multi-line-info">Adresse : </label><span id="adresse">29 rue de la joie, 69000 Lyon</span></div>
 					<div><label class="label-multi-line-info">Complément : </label><span id="complement">Y en a pas</span></div>
-					<div><label class="label-multi-line-info">Espèce de l'animal : </label><span id="compInter">chien</span></div>
 				</div>
             <form id="form">
                 <textarea id="commentaire" placeholder="commentaire"></textarea>
@@ -110,35 +109,50 @@ and open the template in the editor.
         </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script>
+        function addInfo(label, text)
+        {
+            var lastChild = $('#multi-line-info div:last-child').last()
+            lastChild.append('<div><label class="label-multi-line-info">'+label+ ' : </label><span id="compInter">'+text+'</span></div>')
+        }
+        function initNom(data)
+        {
+            $('#nomEmp').html(data.employe.prenom+ " "+ data.employe.nom)
+            
+        }
+        function initInterv(data)
+        {
+            $('#type').html(data.type);
+            $('#date').html(data.date);
+            $('#description').html(data.description);
+            $('#client').html(data.client.prenom + " " + data.client.nom)
+            var adresse = data.client.adresse;
+            $('#adresse').html(adresse.rue + ", " + adresse.codePostal + " " + adresse.ville)
+            $('#complement').html(adresse.complement);
+            if(data.type=="Animal")
+            {
+                addInfo("Expèce de l'animal",data.animal)
+            }
+            else if(data.type=="Livraison")
+            {
+                addInfo("Type de livraison",data.typeLivraison);
+                addInfo("Entreprise",data.entrepriseLivraison);
+            }
+        }
         $(function(){
             $.ajax({
                     url: './ActionServlet',
                     type: 'POST',
-                    data: {action : "AccueilEmploye"}, 
+                    data: {action : "InfoEmp"}, 
                 }).done(function(data){
-                    var intervention = data.intervention;
-                    if(intervention === undefined)
-                        return;
-                    var client = intervention.client;
-                    var adresse = client.adresse;
-                    $('#type').html(intervention.type);
-                    $('#date').html(intervention.dateDebut);
-                    switch(intervention.status)
-                    {
-                        case 'E':
-                            $('#status').html("En cours...");
-                            break;
-                    }
-                    $('#description').html("Description : "+intervention.description);
-                    $('#client').html("Client : " + client.prenom + " " + client.nom + " (#" + client.id + ")");
-                    $('#adresse').html("Adresse : " + adresse.rue + ", " + adresse.codePostal + " " + adresse.ville);
-                    $('#complement').html("Complément : " + adresse.complement);
-                    switch(intervention.type)
-                    {
-                        case "Animal":
-                            $('#compInter').html("Espèce de l'animal : ");
-                            break;
-                    }
+                    initNom(data)
+                });
+                
+                $.ajax({
+                    url: './ActionServlet',
+                    type: 'POST',
+                    data: {action : "CurrentInterv"}, 
+                }).done(function(data){
+                    initInterv(data.intervention)
                 })
         });
     </script>

@@ -10,6 +10,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mycompany.web.app.proactif.vue.VueConnexion;
+import com.mycompany.web.app.proactif.vue.VueCurrentIntervention;
+import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -208,7 +210,7 @@ public class ActionServlet extends HttpServlet {
                 break;
                 
             case "AccueilEmploye":
-                List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
+/*                List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
                 Intervention theIntervention = null;
                 for(Intervention inter : interventions)
                 {
@@ -265,7 +267,14 @@ public class ActionServlet extends HttpServlet {
                 joMain.add("employe", joEmpInf);
                 response.getWriter().println(joMain.toString());
 
+ */               break;
+            case "InfoEmp":
+                new ActionInfoEmploye(request).exec();
+                new VueInfoEmploye(request, response).exec();
                 break;
+            case "CurrentInterv":
+                new ActionCurrentIntervention(request).exec();
+                new VueCurrentIntervention(request, response).exec();
         }
             
 
