@@ -15,6 +15,7 @@ import com.mycompany.web.app.proactif.vue.VueDemandeInterv;
 import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
 import com.mycompany.web.app.proactif.vue.VueInscription;
 import com.mycompany.web.app.proactif.vue.VueIntervsClient;
+import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
