@@ -93,7 +93,7 @@ public class ActionServlet extends HttpServlet {
 //            getServletContext().getRequestDispatcher("/connexion.html").forward(request, response);
             return;
         }
-
+        System.out.println(todo);
         switch(todo)
         {
             case "deconnection" :
@@ -168,21 +168,37 @@ public class ActionServlet extends HttpServlet {
                 response.getWriter().println(gson.toJson(joNom));
                 break;
             
-            case "clientIntervRecentes" :
+            case "clientIntervs" :
+                
                 JsonArray listeIntervs = new JsonArray();
                 List<Intervention> intervsClient = srv.obtenirInterventionsParClient((Client)p);
-                for(int nbInterv = 0; nbInterv < intervsClient.size() && nbInterv <= 3; nbInterv++)
+                String all = request.getParameter("all");
+                int bound = 3;
+                if(all.equals("true"))
+                    bound = intervsClient.size();
+                System.out.println(bound);
+                for(int nbInterv = 0; nbInterv < intervsClient.size() && nbInterv < bound; nbInterv++)
                 {
                     Intervention i = intervsClient.get(nbInterv);
                     JsonObject joInterv = new JsonObject();
                     joInterv.addProperty("type", i.getTypeLabel());
                     joInterv.addProperty("début", i.getDebut().toString());
-                    joInterv.addProperty("status", i.getStatus());
+                    String status = null;
+                    if(i.getStatus() == 'E'){
+                        status = "En cours";
+                    }else if(i.getStatus() == 'R'){
+                        status = "Terminée";
+                    }else if(i.getStatus() == 'P'){
+                        status = "Problème";
+                    }
+                    joInterv.addProperty("status", status);
                     joInterv.addProperty("description", i.getDescription());
                     joInterv.addProperty("employéNom", i.getEmploye().getNom());
                     joInterv.addProperty("employéPrénom", i.getEmploye().getPrenom());
 //                    joInterv.addProperty("fin", i.getFin().toString());
                     joInterv.addProperty("com", i.getCommentaire());
+                    if(i.getFin() != null)
+                        joInterv.addProperty("fin", i.getFin().toString());
                     if(i.getClass() == InterventionLivraison.class)
                     {
                         InterventionLivraison iL = (InterventionLivraison)i;
@@ -202,6 +218,38 @@ public class ActionServlet extends HttpServlet {
                 JsonObject container = new JsonObject();
                 container.add("listeIntervs", listeIntervs);
                 response.getWriter().println(gson.toJson(container));
+                break;
+            
+            case "demandeInterv":
+                String type = request.getParameter("type");
+                String desc = request.getParameter("description");
+                Intervention interv = null;
+                switch(type){
+                    case "Incident" :
+                        interv = new InterventionIncident(desc);
+                        break;
+                    
+                    case "Animal" :
+                        String espece = request.getParameter("espèce");
+                        interv = new InterventionAnimal(desc, espece);
+                        break;
+                        
+                    case "Livraison" :
+                        String typeLiv = request.getParameter("typeLiv");
+                        String compLiv = request.getParameter("compLiv");
+                        interv = new InterventionLivraison(desc, typeLiv, compLiv);    
+                        break;
+                }
+                if(interv != null){
+                    try{
+                        srv.demanderIntervention((Client)p, interv);
+                        joSess.addProperty("demandeInterv", "ok");
+                        response.getWriter().println(gson.toJson(joSess));
+                    }catch(ServiceException e){
+                        joSess.addProperty("error", e.getMessage());
+                        response.getWriter().println(gson.toJson(joSess));
+                    }
+                }
                 break;
                 
             case "AccueilEmploye":

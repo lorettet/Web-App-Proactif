@@ -17,9 +17,11 @@ and open the template in the editor.
             <a href='' onclick='javascript:deco();'>Déconnexion</a>
         </div>
         <div>
-            <button id="accueilBut">Accueil</button>
-            <button id="newDemandeBut">Nouvelle Demande</button>
-            <button id="histDemandeBut">Historique des demandes</button>
+            <ul id='onglets'>
+                <li class="active"><a href="#" id='accueilBut' onclick="accueil();"> Accueil </a></li>
+                <li><a href="#" id="newDemandeBut" onclick="newDemande();"> Nouvelle Demande </a></li>
+                <li><a href="#" id="histBut" onclick="histo();"> Historique des demandes </a></li>
+            </ul>
         </div>
         <div id='content'>
             
@@ -34,14 +36,15 @@ and open the template in the editor.
                     dataType: 'json',
                 }).done(function(data){
                     if(data.sess === 'pasok'){
+                        alert('Vous êtes déconnecté');
                         window.location = "./connexion.html";
                         return;
                     }
-                    document.getElementById("accueilBut").focus();
                     $('#bonjour').html("Bonjour "+data.prénom+" "+data.nom+" !");
                     accueil();
                 })
         });
+        
         function deco(){
                     alert("deco");
                     $.ajax({
@@ -52,26 +55,146 @@ and open the template in the editor.
                         window.location = "./connexion.html";
                     })
                 }
+                
         function accueil(){
             $('#content').html("<div>Vos demandes d'intervention récentes</div><div id='interventions'></div>");
             $.ajax({
                 url: './ActionServlet',
                 type: 'POST',
-                data: {action : 'clientIntervRecentes'},
+                data: {action : 'clientIntervs', all : 'false'},
                 dataType: 'json',
             }).done(function(data){
-                alert(data.listeIntervs[0].type);
-                for(var i=0; i<1; i++){
+                displayInterv(data);
+            })
+        }
+        
+        function newDemande(){
+            $('#content').html("<form id='formulaire' method='POST' action='./ActionServlet'>\n\
+                                <div>\n\
+                                <fieldset>\n\
+                                <legend>Demande d'intervention</legend>\n\
+                                <div><input name='action' type='hidden' value='demandeInterv' /></div>\n\
+                                <div>Type d'intervention : \n\
+                                <select id='typeInterv' name='type'>\n\
+                                <option value='Animal'>Animal</option>\n\
+                                <option value='Incident' selected>Incident</option>\n\
+                                <option value='Livraison'>Livraison</option>\n\
+                                </select></div>\n\
+                                <div>Description : <textarea name='description' required='required'></textarea></div>\n\
+                                <div id='moreFields'></div>\n\
+                                <div><input type='submit' value='Valider'>\n\
+                                <button type='button' onclick=\"$('#accueilBut').click();alert($('#formulaire').serialize());\">Annuler</button></div>\n\
+                                </fieldset>\n\
+                                </div>\n\
+                                </form>"
+                                );
+            
+            $('#formulaire').submit( function(event){
+                    $.ajax({
+                    url: $('#formulaire').attr('action'),
+                    type: 'POST',
+                    data: $('#formulaire').serialize(), 
+                    dataType: 'json'
+                }).done(function(data){
+                    if(data.demandeInterv === 'ok'){
+                        alert('Demande effectuée avec succès');
+                        $('#accueilBut').click();
+                    }else{
+                        alert(data.error);
+                    }
+                });
+                event.preventDefault();
+            });
+            
+            $('#typeInterv').change(function(){
+                changeForm($('#typeInterv option:selected').text());
+            });            
+            
+            function changeForm(typeInterv){
+                if(typeInterv === 'Incident'){
+                    $('#moreFields').html('');
+                }else if(typeInterv === 'Animal'){
+                    $('#moreFields').html("<div>Espèce de l'animal : <input type='text' name='espèce' required='required'></div>");
+                }else if(typeInterv === 'Livraison'){
+                    $('#moreFields').html("<div>Type de livraison : <input type='text' name='typeLiv' required='required'></div>\n\
+                                            <div>Entreprise de livraison : <input type='text' name='compLiv' required='required'></div>"
+                                        );
+                }
+            }
+        }
+        
+        function histo(){
+            $('#content').html("<div>Historique de vos demandes d'intervention</div>\n\
+                                <input type='text' placeholder='Search..' name='search'>\n\
+                                <button type='submit'>search button</button>\n\
+                                <div id='interventions'></div>");
+            $.ajax({
+                url: './ActionServlet',
+                type: 'POST',
+                data: {action : 'clientIntervs', all : 'true'},
+                dataType: 'json',
+            }).done(function(data){
+                displayInterv(data);
+            })
+        }
+        
+        function displayInterv(data){
+            for(var i=0; i<data.listeIntervs.length; i++){
                     $('#interventions:last-child').append(
-                        '<fieldset>'
+                        '<fieldset>\n\
+                        <div>'
                         +data.listeIntervs[i].type+' '
                         +data.listeIntervs[i].début+' '
                         +data.listeIntervs[i].status+' '
+                        +'</div>'
+                        +'<div>Description : '
+                        +data.listeIntervs[i].description+' '
+                        +'</div>'
+                        +'<div>Prise en charge par '
+                        +data.listeIntervs[i].employéNom+' '+data.listeIntervs[i].employéPrénom+' '
+                        +'<a href=\"#\" id=\"hrefplusdiv'+i+'\" style=\'visibility:visible\'; onclick=\"plusMoins('+i+', \'plus\');\">plus</a>'
+                        +'</div>'
+                        +'<div id="invisible'+i+'" style="display:none;">'
+                        +'<a href=\"#\" id=\"hrefmoinsdiv'+i+'\" onclick=\"plusMoins('+i+', \'moins\');\">moins</a>'
+                        +'</div>'
                         +'</fieldset>'
                     );
+                caseStatus(data.listeIntervs[i], 'invisible'+i);
+                caseType(data.listeIntervs[i], 'invisible'+i);
+            }
+            function caseType(data, div){
+                if(data.type === 'Livraison'){
+                    $('#'+div).prepend(
+                            '<div>Type de livraison : '+data.typeLiv+'</div>'
+                            +'<div>Entreprise de livraison : '+data.compLiv+'</div>'
+                            )
+                }else if(data.type === 'Animal'){
+                    $('#'+div).prepend(
+                            '<div>Animal : '+data.typeAnimal+'</div>'
+                            )
                 }
-            })
+            }
+            
+            function caseStatus(data, div){
+                if(data.status === 'Terminée'){
+                    $('#'+div).prepend(
+                            '<div>Terminée : '+data.fin+'</div>'
+                            +'<div>Commentaire : '+data.com+'</div>'
+                            )
+                }
+            }
+            
         }
+        function plusMoins(div, plusOUmoins){
+            if(plusOUmoins === "plus"){
+                document.getElementById('hrefplusdiv'+div).style.visibility = "hidden";
+                document.getElementById('invisible'+div).style.display = "block";
+            }else if(plusOUmoins === "moins"){
+                document.getElementById('invisible'+div).style.display = "none";
+                document.getElementById('hrefplusdiv'+div).style.visibility = "visible"
+            }
+        }
+        
     </script>
     </body>
 </html>
