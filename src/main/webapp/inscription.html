@@ -55,7 +55,7 @@ and open the template in the editor.
                     data: $('#formulaire').serialize(), 
                     dataType: 'json'
                 }).done(function(data){
-                        if(data.inscrit === "ok"){
+                        if(data.inscrit === "true"){
                             alert("Vous êtes enregistré, veuillez vous connecter");
                             window.location =  "./connexion.html";
                         }else{
