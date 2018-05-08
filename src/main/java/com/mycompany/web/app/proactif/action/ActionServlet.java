@@ -16,6 +16,7 @@ import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
 import com.mycompany.web.app.proactif.vue.VueInscription;
 import com.mycompany.web.app.proactif.vue.VueIntervsClient;
 import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
+import com.mycompany.web.app.proactif.vue.VueValiderIntervention;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -111,36 +112,7 @@ public class ActionServlet extends HttpServlet {
             case "login" :
                 new ActionConnexion(request).exec();
                 new VueConnexion(request, response).exec();
-/*                System.out.println("login"+p);
-                Personne newP = srv.authentifierPersonne(request.getParameter("mail"), request.getParameter("password"));
-                if(newP == null)//authentication failed
-                {
-                    System.out.println("log failed");
-                    joSess.addProperty("error", "Les identifiants entrés sont incorrects");
-                    response.getWriter().println(gson.toJson(joSess));
-                }else if(p == null || (p != null && !newP.getEmail().equals(p.getEmail())))//authentication succeeded
-                {
-                    System.out.println("new personne");
-                    sess.setAttribute("personne", newP);
-                    if(newP.getClass() == Client.class)
-                    {
-                        joSess.addProperty("log", "okClient");
-                        response.getWriter().println(gson.toJson(joSess));
-//                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
-                    }
-                    else if(newP.getClass() == Employe.class)
-                    {
-                        joSess.addProperty("log", "okEmployé");
-                        response.getWriter().println(gson.toJson(joSess));
-//                        getServletContext().getRequestDispatcher("/index.html").forward(request, response);
-                    }
-                }else//already registered
-                {
-                    System.out.println("already registered");
-                    joSess.addProperty("error", "Vous êtes déjà connecté");
-                    response.getWriter().println(gson.toJson(joSess));
-                }
- */               break;
+               break;
                 
             case "signup" :
                 new ActionInscription(request).exec();
@@ -262,73 +234,16 @@ public class ActionServlet extends HttpServlet {
 //                }
                 break;
 
-                
-            case "AccueilEmploye":
-/*                List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
-                Intervention theIntervention = null;
-                for(Intervention inter : interventions)
-                {
-                    if(inter.getEmploye().getId() == p.getId())
-                    {
-                        if(inter.getStatus()=='E')
-                        {
-                            theIntervention = inter;
-                            break;
-                        }
-                    }
-                }
-                JsonObject joMain = new JsonObject();
-                JsonObject joInter = new JsonObject();
-                if(theIntervention != null)
-                {
-                    joInter.addProperty("type",theIntervention.getTypeLabel());
-                    joInter.addProperty("status", theIntervention.getStatus());
-                    joInter.addProperty("description",theIntervention.getDescription());
-                    joInter.addProperty("dateDebut", theIntervention.getDebut().toString());
-                    if(theIntervention.getClass() == InterventionAnimal.class)
-                    {
-                        String typeAnimal = ((InterventionAnimal)theIntervention).getTypeAnimal();
-                        joInter.addProperty("typeAnimal",typeAnimal);
-                    }
-                    else if(theIntervention.getClass() == InterventionLivraison.class)
-                    {
-                        
-                    }
-                    else if(theIntervention.getClass() == InterventionIncident.class)
-                    {
-                        
-                    }
-                    Client client = theIntervention.getClient();
-                    JsonObject joCli = new JsonObject();
-                    joCli.addProperty("id", client.getId());
-                    joCli.addProperty("nom",client.getNom());
-                    joCli.addProperty("prenom",client.getPrenom());
-                    JsonObject joAdresse = new JsonObject();
-                    Adresse adresse = client.getAdresse();
-                    joAdresse.addProperty("rue", adresse.getRue());
-                    joAdresse.addProperty("codePostal", adresse.getCodePostal());
-                    joAdresse.addProperty("ville", adresse.getVille());
-                    joAdresse.addProperty("complement", adresse.getComplement());
-                    joCli.add("adresse", joAdresse);
-                    joInter.add("client",joCli);
-                    joMain.add("intervention", joInter);
-                }
-                
-                
-                JsonObject joEmpInf = new JsonObject();
-                joEmpInf.addProperty("prénom", p.getPrenom());
-                joEmpInf.addProperty("nom", p.getNom());
-                joMain.add("employe", joEmpInf);
-                response.getWriter().println(joMain.toString());
-
- */               break;
             case "InfoEmp":
                 new ActionInfoEmploye(request).exec();
                 new VueInfoEmploye(request, response).exec();
                 break;
             case "CurrentInterv":
-                new ActionCurrentIntervention(request).exec();
                 new VueCurrentIntervention(request, response).exec();
+                break;
+            case "ValiderIntervention":
+                new ActionValiderIntervention(request).exec();
+                new VueValiderIntervention(request, response).exec();
         }
             
 

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import modele.Adresse;
 import modele.Client;
+import modele.Employe;
 import modele.Intervention;
 import modele.InterventionAnimal;
 import modele.InterventionIncident;
@@ -33,7 +34,19 @@ public class VueCurrentIntervention {
     
     public void exec()
     {
-        Intervention interv = (Intervention) request.getAttribute("intervention");
+        Employe e = ((Employe)request.getSession(false).getAttribute("personne"));
+        Intervention interv = e.getInterventionEnCours();
+        if(interv == null)
+        {
+            JsonObject result = new JsonObject();
+            result.addProperty("error", "noInterv");
+            try {
+                response.getWriter().println(result);
+            } catch (IOException ex) {
+                Logger.getLogger(VueCurrentIntervention.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        }
         
         JsonObject joInterv = new JsonObject();
         String typeLabel = interv.getTypeLabel();

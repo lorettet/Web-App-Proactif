@@ -1,0 +1,87 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : May 8, 2018, 3:31:10 PM
+    Author     : o0dem
+*/
+
+#main{
+        margin-right: auto;
+        margin-left: auto;
+        width: 40%;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        padding:1em;
+}
+#deconnexion{
+        float:right;
+}
+#one-line-info>span{
+        margin:10%;
+}
+
+
+#multi-line-info>div{
+        margin-top:5px;
+        margin-bottom:5px;
+}
+
+#form{
+        margin-top: 2em;
+        padding-top: 2em;
+        border-top : 1px solid black;
+}
+
+#commentaire{
+        width:50%;
+        height:5em;
+}
+
+input, textarea{
+        vertical-align:top;
+}
+
+label{
+        display : inline-block;
+}
+
+#one-line-info{
+        text-align:center;
+}
+
+#multi-line-info{
+        margin-top:1em;
+}
+
+.label-multi-line-info{
+        text-align:right;
+        margin-right:1em;
+        vertical-align: top;
+}
+
+#description{
+        width: 50%;
+        display: inline-block;
+        margin : 0;
+        text-align : justify;
+}
+
+#submit{
+    display: block;
+    margin-top: 1em;
+}
+
+h2{
+    text-align: center;
+}
+
+.label-multi-line-form{
+    width:30%;
+    display: inline-block;
+}
+
+#form div{
+    margin-bottom: 1em;
+}

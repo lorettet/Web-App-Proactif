@@ -34,21 +34,9 @@ public class ActionCurrentIntervention {
     {
                 ServiceConciergerie srv = new ServiceConciergerie();
                 HttpSession sess = request.getSession(false);
+
                 Employe p = (Employe) sess.getAttribute("personne");
-                List<Intervention> interventions = srv.obtenirToutesInterventionsDuJour();
-                Intervention theIntervention = null;
-                for(Intervention inter : interventions)
-                {
-                    if(inter.getEmploye().getId() == p.getId())
-                    {
-                        if(inter.getStatus()=='E')
-                        {
-                            theIntervention = inter;
-                            break;
-                        }
-                    }
-                }
-                
+                Intervention theIntervention = p.getInterventionEnCours();
                 request.setAttribute("intervention", theIntervention);
     }
 }
