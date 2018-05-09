@@ -16,6 +16,7 @@ import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
 import com.mycompany.web.app.proactif.vue.VueInscription;
 import com.mycompany.web.app.proactif.vue.VueIntervsClient;
 import com.mycompany.web.app.proactif.vue.VueInfoEmploye;
+import com.mycompany.web.app.proactif.vue.VueInterventionsDuJour;
 import com.mycompany.web.app.proactif.vue.VueValiderIntervention;
 import dao.JpaUtil;
 import java.io.IOException;
@@ -244,6 +245,11 @@ public class ActionServlet extends HttpServlet {
             case "ValiderIntervention":
                 new ActionValiderIntervention(request).exec();
                 new VueValiderIntervention(request, response).exec();
+                break;
+            case "InterventionsDuJour":
+                new ActionInterventionsDuJour(request).exec();
+                new VueInterventionsDuJour(request, response).exec();
+                break;
         }
             
 

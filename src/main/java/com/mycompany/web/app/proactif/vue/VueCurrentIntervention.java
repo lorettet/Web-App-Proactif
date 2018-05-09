@@ -7,6 +7,7 @@ package com.mycompany.web.app.proactif.vue;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -66,8 +67,10 @@ public class VueCurrentIntervention {
             joInterv.addProperty("type", typeLabel);
         }
         
-        joInterv.addProperty("date", interv.getDebut().getDay()+"/"+interv.getDebut().getMonth()+"/"+interv.getDebut().getYear());
+        joInterv.addProperty("date", interv.getDebut().getDate()+"/"+(interv.getDebut().getMonth()+1)+"/"+(interv.getDebut().getYear()+1900));
         joInterv.addProperty("description", interv.getDescription());
+        
+        System.out.println(joInterv);
         
         Client c = interv.getClient();
         JsonObject joClient = new JsonObject();

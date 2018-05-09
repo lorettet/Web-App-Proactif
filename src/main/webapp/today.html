@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/styleHeaderEmploye.css"/>
+        <link rel="stylesheet" href="css/styleToday.css"/>
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="js/deconnexion.js"></script>
+        <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhf3JleYpal9S-xouJYH8lf7Dvz5Y2Nko&callback=initMap"></script>
+        
+    </head>
+
+    <body>
+        <header>
+            <h1>Proact'IF</h1>
+            <div id="infoEmp">
+                <span id="nomEmp"></span>
+                <div>Ce n'est pas vous? <a href='' onclick="deco()">Déconnexion</a></div>
+            </div>
+            <div id="menu">
+            <a href="accueilEmploye.html"><button>Accueil</button></a><a href="today.html"><button style="background-color:#007FFF">Interventions du jour</button></a>
+            </div>
+            
+        </header>
+        <h2>Interventions du jour</h2>
+        <h3><span id="nbIntervention"></span> aujourd'hui, dont <span id="nbIntervEnCours"></span> encore en cours</h3>
+        <div id="map"></div>
+        <script src="js/scriptToday.js"></script>
+        <script>
+            function initMap()
+            {
+              map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: lyon
+              });
+            }
+        </script>
+    </body>
+</html>
