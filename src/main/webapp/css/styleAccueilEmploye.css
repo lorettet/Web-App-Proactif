@@ -71,6 +71,7 @@ label{
 #submit{
     display: block;
     margin-top: 1em;
+    margin-left : auto
 }
 
 h2{
@@ -84,4 +85,25 @@ h2{
 
 #form div{
     margin-bottom: 1em;
+}
+
+#mapLink{
+    margin-left: 1em;
+}
+
+.red{
+    color: red;
+}
+
+.green{
+    color: green;
+}
+
+.yellow{
+    color: yellow
+}
+
+.cdr-message{
+    text-align: center;
+    display : block;
 }

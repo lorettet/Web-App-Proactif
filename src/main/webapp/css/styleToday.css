@@ -26,6 +26,6 @@ h2,h3{
     text-decoration: underline;
     cursor: pointer;
     display:block;
-    width:fit-content;
     margin-left:auto;
+    float: right;
 }

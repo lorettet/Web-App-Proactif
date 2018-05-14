@@ -35,6 +35,7 @@ public class VueCurrentIntervention {
     
     public void exec()
     {
+        System.out.println("envoie des infos...");
         Employe e = ((Employe)request.getSession(false).getAttribute("personne"));
         Intervention interv = e.getInterventionEnCours();
         if(interv == null)

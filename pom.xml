@@ -16,14 +16,14 @@
     
     <dependencies>
         <dependency>
-            <groupId>fr.insalyon.b3321</groupId>
-            <artifactId>ProactIF</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.metro</groupId>
             <artifactId>webservices-rt</artifactId>
             <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.insalyon.b3321</groupId>
+            <artifactId>ProactIF</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

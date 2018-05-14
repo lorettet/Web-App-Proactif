@@ -7,6 +7,11 @@
 
 function submit()
 {   
+    if(!$('#ok').prop('checked') && !$('#nok').prop('checked'))
+    {
+         $('#form').append("<span class='yellow cdr-message'>Veuillez cocher un état</span>")
+         return;
+    }
     var etat="text";
     if($('#ok')[0].checked)
         etat="ok";
@@ -22,7 +27,15 @@ function submit()
     }, 
     dataType: 'json'
     }).done(function(data){
-        location.reload();
+        if(data.error==="exceptionCaught")
+        {
+            $('#form').append("<span class='red cdr-message'>Une erreur s'est produite</span>")
+        }
+        else if(data.error==='no')
+        {
+            $('#info').html("<h2>Aucune intervention en cours</h2>"+
+                            "<span class='green cdr-message'>Validation OK</span>")
+        }
     });
 }
 function addInfo(label, text)
@@ -44,6 +57,7 @@ function initInterv(data)
     $('#client').html(data.client.prenom + " " + data.client.nom)
     var adresse = data.client.adresse;
     $('#adresse').html(adresse.rue + ", " + adresse.codePostal + " " + adresse.ville)
+    $('#mapLink').attr('href','https://www.google.com/maps?q='+adresse.rue+" "+adresse.codePostal)
     $('#complement').html(adresse.complement);
     if(data.type==="Animal")
     {
@@ -83,6 +97,7 @@ $(function(){
         {
             $('#main').empty();
             $('#main').html("<h2>Aucune intervention en cours</h2>")
+            return;
         }
         initInterv(data.intervention)
     });

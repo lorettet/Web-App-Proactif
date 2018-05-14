@@ -22,7 +22,7 @@ and open the template in the editor.
             <h1>Proact'IF</h1>
             <div id="infoEmp">
                 <span id="nomEmp"></span>
-                <div>Ce n'est pas vous? <a href='' onclick="deco()">Déconnexion</a></div>
+                <div>Ce n'est pas vous? <a href='#' onclick="deco()">Déconnexion</a></div>
             </div>
             <div id="menu">
                 <a href="accueilEmploye.html"><button style="background-color:#007FFF">Accueil</button></a><a href="today.html"><button>Interventions du jour</button></a>
@@ -39,24 +39,28 @@ and open the template in the editor.
 				<div id="multi-line-info">
 					<div><label class="label-multi-line-info">Description : </label><p id="description"></p></div>
 					<div><label class="label-multi-line-info">Client : </label><span id="client"></span></div>
-					<div><label class="label-multi-line-info">Adresse : </label><span id="adresse"></span></div>
+                                        <div><label class="label-multi-line-info">Adresse : </label><span id="adresse"></span><a id="mapLink"><button>Carte</button></a></div>
 					<div><label class="label-multi-line-info">Complément : </label><span id="complement"></span></div>
 				</div>
-            <div id="form">
-                <div>
-                    <span class="label-multi-line-form">Etat de l'intervention : </span>
-                    <input type="radio" name="cdr" id="ok">
-                    <label for="ok">Réalisé</label>
-                    <input type="radio" name="cdr" id="nok">
-                    <label for="nok">Un problème est survenu</label>
-                </div>
-                <div>
-                    <span class="label-multi-line-form" id="commentaireLabel">Commentaire : </span>
-                    <textarea id="commentaire" placeholder="commentaire"></textarea>
-                    <input id="submit" type="button" value="Terminé l'intervention" onclick="submit()">
+                <div id="form">
+                    <div>
+                        <span class="label-multi-line-form">Etat de l'intervention : </span>
+                        <input type="radio" name="cdr" id="ok">
+                        <label for="ok">Réalisé</label>
+                        <input type="radio" name="cdr" id="nok">
+                        <label for="nok">Un problème est survenu</label>
+                    </div>
+                    <div>
+                        <span class="label-multi-line-form" id="commentaireLabel">Commentaire : </span>
+                        <textarea id="commentaire" placeholder="commentaire"></textarea>
+                        <input id="submit" type="button" value="Terminé l'intervention" onclick="submit()">
+                    </div>
                 </div>
             </div>
         </div>
+        <footer>
+            <a href="accueilEmploye.html">Accueil</a> | <a href="loremipsum.html">A propos de Proact'IF</a> | <a href="loremipsum.html">Mentions Légales</a> | <a href="loremipsum.html">CGV</a>
+        </footer>
     </body>
 
 </html>
