@@ -12,7 +12,7 @@ and open the template in the editor.
         <link rel="stylesheet" href="./css/firstStyle.css"/>
     </head>
     <body>
-        <div><input id="deconnection" type="submit" value="Déconnection"></div>
+        <a href='' onclick='javascript:deco();'>Déconnexion</a>
         <form id="formulaire" method="POST" action="./ActionServlet">
             <div>
                 <fieldset >
@@ -32,6 +32,7 @@ and open the template in the editor.
             </div>
         
         <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="js/deconnexion.js"></script>
         <script>
             function setErrorField(error)
             {
@@ -75,14 +76,6 @@ and open the template in the editor.
                     });
                     event.preventDefault();
                 });
-                $('#deconnection').click( function(){
-                    alert("deco");
-                    $.ajax({
-                        url: './ActionServlet',
-                        type: 'POST',
-                        data: {action : 'deconnection'},
-                    })
-                })
             });
         </script>
     </body>

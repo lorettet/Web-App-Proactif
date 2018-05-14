@@ -9,6 +9,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +40,6 @@ public class VueIntervsClient {
     
     public void exec()
     {
-        System.out.println("vue");
         HttpSession sess = request.getSession(true);
         Personne p = (Personne) sess.getAttribute("personne");
         JsonArray listeIntervs = new JsonArray();
@@ -48,12 +49,15 @@ public class VueIntervsClient {
         int bound = 3;
         if(all.equals("true"))
             bound = intervsClient.size();
+        
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+
         for(int nbInterv = 0; nbInterv < intervsClient.size() && nbInterv < bound; nbInterv++)
         {
             Intervention i = intervsClient.get(nbInterv);
             JsonObject joInterv = new JsonObject();
             joInterv.addProperty("type", i.getTypeLabel());
-            joInterv.addProperty("début", i.getDebut().toString());
+            joInterv.addProperty("début", formatter.format(i.getDebut()));
             String status = null;
             if(i.getStatus() == 'E'){
                 status = "En cours";
@@ -68,7 +72,7 @@ public class VueIntervsClient {
             joInterv.addProperty("employéPrénom", i.getEmploye().getPrenom());
             joInterv.addProperty("com", i.getCommentaire());
             if(i.getFin() != null)
-                joInterv.addProperty("fin", i.getFin().toString());
+                joInterv.addProperty("fin", formatter.format(i.getFin()));
             if(i.getClass() == InterventionLivraison.class)
             {
                 InterventionLivraison iL = (InterventionLivraison)i;
@@ -92,6 +96,5 @@ public class VueIntervsClient {
         } catch (IOException ex) {
             Logger.getLogger(VueIntervsClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("la");
     }
 }

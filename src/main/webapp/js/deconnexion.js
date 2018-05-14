@@ -16,3 +16,4 @@ function deco()
         window.location = "./connexion.html";
     })
 }
+

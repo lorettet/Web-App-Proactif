@@ -24,9 +24,66 @@ and open the template in the editor.
             </ul>
         </div>
         <div id='content'>
-            
+            <div id='histoDiv' style='display:none'>
+                <div>Historique de vos demandes d'intervention</div>
+                <form id='filterForm' action="" method="post">
+                    <ul>
+                    <li><input type='hidden' value='0' name='Tous'>
+                        <input type="checkbox" checked value='1' name='Tous' id="chkTous" onclick="tousBoxChecked(this);">Tous afficher</li>    
+                    <li><input type='hidden' value='0' name='Type'>
+                        <input type="checkbox" value='1' name='Type' id="chkType" onclick="typeBoxChecked(this);">Type</li>
+                    <li><input type='hidden' value='0' name='Date'>
+                        <input type="checkbox" value='1' name="Date" id="chkDate" onclick="dateBoxChecked(this);">Date</li>
+                    <li><input type='hidden' value='0' name='Status'>
+                        <input type="checkbox" value='1' name="Status" id="chkStatus" onclick="statusBoxChecked(this);">Status</li>
+                    </ul>
+                    <ul id='types' style='display:none'>
+                    <li><input type='hidden' value='0' name='Incident'>
+                        <input type="checkbox" value='1' name="Incident" id="chkIncident">Incident</li>
+                    <li><input type='hidden' value='0' name='Animal'>
+                        <input type="checkbox" value='1' name="Animal" id="chkAnimal">Animal</li>
+                    <li><input type='hidden' value='0' name='Livraison'>
+                        <input type="checkbox" value='1' name="Livraison" id="chkLivraison">Livraison</li>
+                    </ul>
+                    <ul id='status' style='display:none'>
+                    <li><input type='hidden' value='0' name='En cours'>
+                        <input type="checkbox" value='1' name="En cours" id="chkEnCours">En cours</li>
+                    <li><input type='hidden' value='0' name='Terminée'>
+                        <input type="checkbox" value='1' name="Terminée" id="chkTerminee">Terminée</li>
+                    <li><input type='hidden' value='0' name='Problème'>
+                        <input type="checkbox" value='1' name="Problème" id="chkProbleme">Problème</li>
+                    </ul>
+                    <input type="date" name="DateInterv" id='calendrier' style='display:none'/>
+                    <button type='submit'>rechercher</button>
+                </form>
+            </div>
+            <div id='newDemandeDiv' style="display:none">
+                <form id='formulaire' method='POST' action='./ActionServlet'>
+                <div>
+                    <fieldset>
+                    <legend>Demande d'intervention</legend>
+                    <div><input name='action' type='hidden' value='demandeInterv' /></div>
+                    <div>Type d'intervention : 
+                    <select id='typeInterv' name='type'>
+                    <option value='Animal'>Animal</option>
+                    <option value='Incident' selected>Incident</option>
+                    <option value='Livraison'>Livraison</option>
+                    </select></div>
+                    <div>Description : <textarea name='description' required='required'></textarea></div>
+                    <div id='moreFields'></div>
+                    <div><input type='submit' value='Valider'>
+                    <button type='button' onclick="$('#accueilBut').click();">Annuler</button></div>
+                    </fieldset>
+                </div>
+                </form>
+            </div>
+            <div id='accueilDiv' style="display:inline">
+                <div>Vos demandes d'intervention récentes</div>
+            </div>
         </div>
     <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <script src="js/deconnexion.js"></script>
     <script>
         $(function(){
             $.ajax({
@@ -44,20 +101,13 @@ and open the template in the editor.
                     accueil();
                 })
         });
-        
-        function deco(){
-                    alert("deco");
-                    $.ajax({
-                        url: './ActionServlet',
-                        type: 'POST',
-                        data: {action : 'deconnection'},
-                    }).done(function(){
-                        window.location = "./connexion.html";
-                    })
-                }
                 
         function accueil(){
-            $('#content').html("<div>Vos demandes d'intervention récentes</div><div id='interventions'></div>");
+            $('#interventions').remove();
+            $('#accueilDiv').append("<div id='interventions'></div>")
+            $('#histoDiv')[0].style.display = 'none';
+            $('#newDemandeDiv')[0].style.display = 'none';
+            $('#accueilDiv')[0].style.display = 'inline';
             $.ajax({
                 url: './ActionServlet',
                 type: 'POST',
@@ -69,25 +119,9 @@ and open the template in the editor.
         }
         
         function newDemande(){
-            $('#content').html("<form id='formulaire' method='POST' action='./ActionServlet'>\n\
-                                <div>\n\
-                                <fieldset>\n\
-                                <legend>Demande d'intervention</legend>\n\
-                                <div><input name='action' type='hidden' value='demandeInterv' /></div>\n\
-                                <div>Type d'intervention : \n\
-                                <select id='typeInterv' name='type'>\n\
-                                <option value='Animal'>Animal</option>\n\
-                                <option value='Incident' selected>Incident</option>\n\
-                                <option value='Livraison'>Livraison</option>\n\
-                                </select></div>\n\
-                                <div>Description : <textarea name='description' required='required'></textarea></div>\n\
-                                <div id='moreFields'></div>\n\
-                                <div><input type='submit' value='Valider'>\n\
-                                <button type='button' onclick=\"$('#accueilBut').click();alert($('#formulaire').serialize());\">Annuler</button></div>\n\
-                                </fieldset>\n\
-                                </div>\n\
-                                </form>"
-                                );
+            $('#histoDiv')[0].style.display = 'none';
+            $('#newDemandeDiv')[0].style.display = 'inline';
+            $('#accueilDiv')[0].style.display = 'none';
             
             $('#formulaire').submit( function(event){
                     $.ajax({
@@ -123,11 +157,14 @@ and open the template in the editor.
             }
         }
         
+        var allInterventions;
         function histo(){
-            $('#content').html("<div>Historique de vos demandes d'intervention</div>\n\
-                                <input type='text' placeholder='Search..' name='search'>\n\
-                                <button type='submit'>search button</button>\n\
-                                <div id='interventions'></div>");
+            $('#interventions').remove();
+            $('#histoDiv').append("<div id='interventions'></div>")
+            $('#histoDiv')[0].style.display = 'inline';
+            $('#newDemandeDiv')[0].style.display = 'none';
+            $('#accueilDiv')[0].style.display = 'none';
+            
             $.ajax({
                 url: './ActionServlet',
                 type: 'POST',
@@ -135,17 +172,95 @@ and open the template in the editor.
                 dataType: 'json',
             }).done(function(data){
                 displayInterv(data);
+                allInterventions = $('#interventions fieldset');
             })
         }
         
+        $('#filterForm').submit( function(event){
+            event.preventDefault();
+            var dataArray = $(this).serializeArray(),
+            dataObj = {};
+
+            $(dataArray).each(function(i, field){
+                dataObj[field.name] = field.value;
+            });
+            $('#interventions').html(filterIntervs(dataObj));
+        });
+        
+        function filterIntervs(filterChoice){
+            console.log(filterChoice); 
+            var result = [];
+            var resultType = [];
+            var resultDate = [];
+            var resultStatus = [];
+            var intervs = allInterventions;
+            var filter = _.filter(_.keys(filterChoice), function (key) {
+                if(filterChoice[key] === "1") return true;
+            });
+            console.log(filter);
+            if(filter.indexOf("Tous") > -1){
+                return allInterventions;
+            }
+            for(var i = 0; i<intervs.length ; i++){
+                if(filter.indexOf("Type") > -1){
+                    if(filter.indexOf($($(intervs[i]).find('#type')).attr('name')) > -1){
+                        //console.log($($(intervs[i]).find('#type')).html(), filter[1]);
+                        resultType.push(intervs[i]);
+                    }
+                }
+                if(filter.indexOf("Date") > -1){
+                    var dateFilter = new Date($('#calendrier').val());
+                    var date = new Date($($(intervs[i]).find('#date')).attr('name'));
+                    dateFilter.setHours(0,0,0,0);
+                    date.setHours(0,0,0,0);
+                    if(date.getTime() === dateFilter.getTime()){
+                        resultDate.push(intervs[i]);
+                    }
+                }
+                if(filter.indexOf("Status") > -1){
+                    if(filter.indexOf($($(intervs[i]).find('#status')).attr('name')) > -1){
+                        console.log($($(intervs[i]).find('#status')).html(), filter[1]);
+                        resultStatus.push(intervs[i]);
+                    }
+                }
+            }
+            console.log(resultStatus);
+            result = result.concat(resultType);
+            result = result.concat(resultDate);
+            result = result.concat(resultStatus);
+            console.log(result);
+            result = _.uniq(result);
+            /*if(filter.indexOf("Type") > -1 && filter.indexOf("Date") > -1){
+                for(var i=0;i<resultDate.length;i++){
+                    if(resultType.indexOf(resultDate[i]) > -1){
+                        result.push(resultDate[i]);
+                    }
+                }
+                console.log('f');
+            }else if(filter.indexOf("Type") > -1){
+                result = resultType;
+                console.log('ff');
+            }else if(filter.indexOf("Date") > -1){
+                console.log('fff');
+                result = resultDate;
+            }else{
+                console.log('ffff');
+                result = allInterventions;
+            }*/
+            console.log(result);
+            return result;
+            //console.log($(result[0]).find('#type').html());
+        }
+        
         function displayInterv(data){
+            $('#interventions:last-child').html('');
             for(var i=0; i<data.listeIntervs.length; i++){
                     $('#interventions:last-child').append(
                         '<fieldset>\n\
                         <div>'
-                        +data.listeIntervs[i].type+' '
-                        +data.listeIntervs[i].début+' '
-                        +data.listeIntervs[i].status+' '
+                        +"<span id='type' name='"+data.listeIntervs[i].type+"'>"+data.listeIntervs[i].type+'  '+'</span>'
+                        +"<span id='date' name='"+new Date(data.listeIntervs[i].début).toLocaleDateString("en-GB")+"'>"+new Date(data.listeIntervs[i].début).toLocaleDateString("en-US")+'  '+'</span>'
+                        +"<span id='status' name='"+data.listeIntervs[i].status+"'>"+data.listeIntervs[i].status+'  '+'</span>'
                         +'</div>'
                         +'<div>Description : '
                         +data.listeIntervs[i].description+' '
@@ -178,13 +293,14 @@ and open the template in the editor.
             function caseStatus(data, div){
                 if(data.status === 'Terminée'){
                     $('#'+div).prepend(
-                            '<div>Terminée : '+data.fin+'</div>'
+                            '<div>Terminée : '+new Date(data.fin).toLocaleDateString("en-US")+'</div>'
                             +'<div>Commentaire : '+data.com+'</div>'
                             )
                 }
             }
             
         }
+        
         function plusMoins(div, plusOUmoins){
             if(plusOUmoins === "plus"){
                 document.getElementById('hrefplusdiv'+div).style.visibility = "hidden";
@@ -195,6 +311,43 @@ and open the template in the editor.
             }
         }
         
+        function typeBoxChecked(element){
+            if($(element).is(':checked')){
+                $('#chkTous').attr('checked', false);
+                document.getElementById('types').style.display = 'block';
+            }else{
+                document.getElementById('types').style.display = 'none'
+            }
+        }
+        
+        function dateBoxChecked(element){
+            if($(element).is(':checked')){
+                $('#chkTous').attr('checked', false);
+                document.getElementById('calendrier').style.display = 'block';
+            }else{
+                document.getElementById('calendrier').style.display = 'none'
+            }
+        }
+        
+        function statusBoxChecked(element){
+            if($(element).is(':checked')){
+                $('#chkTous').attr('checked', false);
+                document.getElementById('status').style.display = 'block';
+            }else{
+                document.getElementById('status').style.display = 'none'
+            }
+        }
+        
+        function tousBoxChecked(element){
+            if($(element).is(':checked')){
+                $('#chkType').attr('checked', false);
+                $('#chkDate').attr('checked', false);
+                $('#chkStatus').attr('checked', false);
+                document.getElementById('types').style.display = 'none';
+                document.getElementById('calendrier').style.display = 'none'
+                document.getElementById('status').style.display = 'none'
+            }
+        }
     </script>
     </body>
 </html>
