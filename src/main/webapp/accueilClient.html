@@ -9,25 +9,32 @@ and open the template in the editor.
         <title>Accueil - Proact'IF</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/styleAccueilClient.css" />
+        <link rel="stylesheet" href="css/styleHeader.css" />
     </head>
     <body>
+        <header>
+        <h1>Proact'IF</h1>
+        <div id='info'>
         <div id="bonjour"></div>
         <div>
             Ce n'est pas vous ?
-            <a href='' onclick='javascript:deco();'>Déconnexion</a>
+            <a href='#' onclick='javascript:deco();'>Déconnexion</a>
         </div>
-        <div>
+        </div>
+        <div id='menu'>
             <ul id='onglets'>
                 <li class="active"><a href="#" id='accueilBut' onclick="accueil();"> Accueil </a></li>
                 <li><a href="#" id="newDemandeBut" onclick="newDemande();"> Nouvelle Demande </a></li>
                 <li><a href="#" id="histBut" onclick="histo();"> Historique des demandes </a></li>
             </ul>
         </div>
+        </header>
         <div id='content'>
             <div id='histoDiv' style='display:none'>
-                <div>Historique de vos demandes d'intervention</div>
+                <h2>Historique de vos demandes d'intervention</h2>
                 <form id='filterForm' action="" method="post">
-                    <ul>
+                    <ul id='triBox'>
                     <li><input type='hidden' value='0' name='Tous'>
                         <input type="checkbox" checked value='1' name='Tous' id="chkTous" onclick="tousBoxChecked(this);">Tous afficher</li>    
                     <li><input type='hidden' value='0' name='Type'>
@@ -53,8 +60,8 @@ and open the template in the editor.
                     <li><input type='hidden' value='0' name='Problème'>
                         <input type="checkbox" value='1' name="Problème" id="chkProbleme">Problème</li>
                     </ul>
-                    <input type="date" name="DateInterv" id='calendrier' style='display:none'/>
-                    <button type='submit'>rechercher</button>
+                    <input type="date" name="DateInterv" id='calendrier' style='display:none'/><br/>
+                    <button type='submit'>Trier</button>
                 </form>
             </div>
             <div id='newDemandeDiv' style="display:none">
@@ -63,27 +70,28 @@ and open the template in the editor.
                     <fieldset>
                     <legend>Demande d'intervention</legend>
                     <div><input name='action' type='hidden' value='demandeInterv' /></div>
-                    <div>Type d'intervention : 
+                    <label for="typeInterv">Type d'intervention :</label> 
                     <select id='typeInterv' name='type'>
+                    <option value='Incident' selected='selected'>Incident</option>
                     <option value='Animal'>Animal</option>
-                    <option value='Incident' selected>Incident</option>
                     <option value='Livraison'>Livraison</option>
-                    </select></div>
-                    <div>Description : <textarea name='description' required='required'></textarea></div>
+                    </select><br/>
+                    <label for="description">Description : </label><textarea id='description' name='description' required='required'></textarea><br />
                     <div id='moreFields'></div>
-                    <div><input type='submit' value='Valider'>
-                    <button type='button' onclick="$('#accueilBut').click();">Annuler</button></div>
+                    <div id='subDemande'><button type='button' id='annulerDemande' onclick="$('#accueilBut').click();">Annuler</button>
+                    <input type='submit' id='validerDemande' value='Valider'></div>
                     </fieldset>
                 </div>
                 </form>
             </div>
             <div id='accueilDiv' style="display:inline">
-                <div>Vos demandes d'intervention récentes</div>
+                <h2>Vos demandes d'intervention récentes</h2>
             </div>
         </div>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="js/deconnexion.js"></script>
+    <script src="js/pagination.js"></script>
     <script>
         $(function(){
             $.ajax({
@@ -115,6 +123,7 @@ and open the template in the editor.
                 dataType: 'json',
             }).done(function(data){
                 displayInterv(data);
+                $('#interventions').pagination('hide');
             })
         }
         
@@ -122,6 +131,8 @@ and open the template in the editor.
             $('#histoDiv')[0].style.display = 'none';
             $('#newDemandeDiv')[0].style.display = 'inline';
             $('#accueilDiv')[0].style.display = 'none';
+            
+            document.getElementById('typeInterv').options[0].selected = 'selected';
             
             $('#formulaire').submit( function(event){
                     $.ajax({
@@ -148,10 +159,10 @@ and open the template in the editor.
                 if(typeInterv === 'Incident'){
                     $('#moreFields').html('');
                 }else if(typeInterv === 'Animal'){
-                    $('#moreFields').html("<div>Espèce de l'animal : <input type='text' name='espèce' required='required'></div>");
+                    $('#moreFields').html("<label for='espece'>Espèce de l'animal : </label><input type='text' id='espece' name='espèce' required='required'><br/>");
                 }else if(typeInterv === 'Livraison'){
-                    $('#moreFields').html("<div>Type de livraison : <input type='text' name='typeLiv' required='required'></div>\n\
-                                            <div>Entreprise de livraison : <input type='text' name='compLiv' required='required'></div>"
+                    $('#moreFields').html("<label for='typeLiv'>Type de livraison : </label><input type='text' id='typeLiv' name='typeLiv' required='required'><br/>\n\
+                                            <label for='compLiv'>Entreprise de livraison : </label><input type='text' id='compLiv' name='compLiv' required='required'><br/>"
                                         );
                 }
             }
@@ -164,6 +175,8 @@ and open the template in the editor.
             $('#histoDiv')[0].style.display = 'inline';
             $('#newDemandeDiv')[0].style.display = 'none';
             $('#accueilDiv')[0].style.display = 'none';
+            $('#chkTous')[0].checked= true;
+            tousBoxChecked($('#chkTous'));
             
             $.ajax({
                 url: './ActionServlet',
@@ -172,7 +185,7 @@ and open the template in the editor.
                 dataType: 'json',
             }).done(function(data){
                 displayInterv(data);
-                allInterventions = $('#interventions fieldset');
+                //allInterventions = $('#interventions fieldset');
             })
         }
         
@@ -184,11 +197,17 @@ and open the template in the editor.
             $(dataArray).each(function(i, field){
                 dataObj[field.name] = field.value;
             });
-            $('#interventions').html(filterIntervs(dataObj));
+            var data = filterIntervs(dataObj);
+            $('#interventions').pagination({
+                    dataSource : data,
+                    pageSize : 3,
+                    callback: function(data, pagination) {
+                    $('#data').html(data);
+                    }
+                });
         });
         
         function filterIntervs(filterChoice){
-            console.log(filterChoice); 
             var result = [];
             var resultType = [];
             var resultDate = [];
@@ -199,37 +218,49 @@ and open the template in the editor.
             });
             console.log(filter);
             if(filter.indexOf("Tous") > -1){
-                return allInterventions;
+                return intervs;
             }
             for(var i = 0; i<intervs.length ; i++){
                 if(filter.indexOf("Type") > -1){
+                    if(i==0) result.push(resultType);
                     if(filter.indexOf($($(intervs[i]).find('#type')).attr('name')) > -1){
-                        //console.log($($(intervs[i]).find('#type')).html(), filter[1]);
                         resultType.push(intervs[i]);
                     }
                 }
                 if(filter.indexOf("Date") > -1){
+                    if(i==0) result.push(resultDate);
                     var dateFilter = new Date($('#calendrier').val());
-                    var date = new Date($($(intervs[i]).find('#date')).attr('name'));
+                    var from = $($(intervs[i]).find('#date')).attr('name').split("/")
+                    var date = new Date(from[2], from[1] - 1, from[0]);
+                    console.log(dateFilter, date);
                     dateFilter.setHours(0,0,0,0);
                     date.setHours(0,0,0,0);
+                    console.log(dateFilter, date);
                     if(date.getTime() === dateFilter.getTime()){
                         resultDate.push(intervs[i]);
                     }
                 }
                 if(filter.indexOf("Status") > -1){
+                    if(i==0) result.push(resultStatus);
                     if(filter.indexOf($($(intervs[i]).find('#status')).attr('name')) > -1){
-                        console.log($($(intervs[i]).find('#status')).html(), filter[1]);
                         resultStatus.push(intervs[i]);
                     }
                 }
             }
-            console.log(resultStatus);
-            result = result.concat(resultType);
+            /*result = result.concat(resultType);
             result = result.concat(resultDate);
             result = result.concat(resultStatus);
-            console.log(result);
-            result = _.uniq(result);
+            result = _.uniq(result);*/
+            console.log(result[0]);
+            for(var i=1;i<result.length;i++)
+            {
+                console.log(result[i]);
+                result[0] = _.intersection(result[0],result[i]);
+                /*result[0].filter(function(n) {
+                    return result[i].indexOf(n) !== -1;
+                });*/
+            }
+            
             /*if(filter.indexOf("Type") > -1 && filter.indexOf("Date") > -1){
                 for(var i=0;i<resultDate.length;i++){
                     if(resultType.indexOf(resultDate[i]) > -1){
@@ -247,20 +278,23 @@ and open the template in the editor.
                 console.log('ffff');
                 result = allInterventions;
             }*/
-            console.log(result);
-            return result;
+            console.log(result[0]);
+            return result[0];
             //console.log($(result[0]).find('#type').html());
         }
         
         function displayInterv(data){
-            $('#interventions:last-child').html('');
+            allInterventions = [];
+            $('#interventions').html('');
+            $('#interventions').append("<div id='data'><div>");
             for(var i=0; i<data.listeIntervs.length; i++){
-                    $('#interventions:last-child').append(
-                        '<fieldset>\n\
-                        <div>'
-                        +"<span id='type' name='"+data.listeIntervs[i].type+"'>"+data.listeIntervs[i].type+'  '+'</span>'
-                        +"<span id='date' name='"+new Date(data.listeIntervs[i].début).toLocaleDateString("en-GB")+"'>"+new Date(data.listeIntervs[i].début).toLocaleDateString("en-US")+'  '+'</span>'
-                        +"<span id='status' name='"+data.listeIntervs[i].status+"'>"+data.listeIntervs[i].status+'  '+'</span>'
+                var date = new Date(data.listeIntervs[i].début);
+                var dateFormated = ("0" + date.getHours()).slice(-2)  + ":" + 
+                                    ("0" + date.getMinutes()).slice(-2);
+                    allInterventions.push($('<fieldset></fieldset>').html("<div>"
+                        +"<span id='type' name='"+data.listeIntervs[i].type+"'>"+data.listeIntervs[i].type+'</span>'
+                        +"<span id='date' name='"+date.toLocaleDateString("en-GB")+"'>"+date.toLocaleDateString("en-GB")+" à "+dateFormated+'</span>'
+                        +"<span id='status' name='"+data.listeIntervs[i].status+"'>"+data.listeIntervs[i].status+'</span>'
                         +'</div>'
                         +'<div>Description : '
                         +data.listeIntervs[i].description+' '
@@ -272,19 +306,25 @@ and open the template in the editor.
                         +'<div id="invisible'+i+'" style="display:none;">'
                         +'<a href=\"#\" id=\"hrefmoinsdiv'+i+'\" onclick=\"plusMoins('+i+', \'moins\');\">moins</a>'
                         +'</div>'
-                        +'</fieldset>'
-                    );
-                caseStatus(data.listeIntervs[i], 'invisible'+i);
-                caseType(data.listeIntervs[i], 'invisible'+i);
+                        +'</fieldset>'));
+            $('#interventions').pagination({
+                    dataSource : allInterventions,
+                    pageSize : 3,
+                    callback: function(data, pagination) {
+                    $('#data').html(data);
+                    }
+                });
+                caseStatus(data.listeIntervs[i], i);//'invisible'+i);
+                caseType(data.listeIntervs[i], i);//'invisible'+i);
             }
             function caseType(data, div){
                 if(data.type === 'Livraison'){
-                    $('#'+div).prepend(
+                    allInterventions[i].find('#invisible'+i).prepend(
                             '<div>Type de livraison : '+data.typeLiv+'</div>'
                             +'<div>Entreprise de livraison : '+data.compLiv+'</div>'
                             )
                 }else if(data.type === 'Animal'){
-                    $('#'+div).prepend(
+                    allInterventions[i].find('#invisible'+i).prepend(
                             '<div>Animal : '+data.typeAnimal+'</div>'
                             )
                 }
@@ -292,8 +332,11 @@ and open the template in the editor.
             
             function caseStatus(data, div){
                 if(data.status === 'Terminée'){
-                    $('#'+div).prepend(
-                            '<div>Terminée : '+new Date(data.fin).toLocaleDateString("en-US")+'</div>'
+                    var date = new Date(data.fin);
+                    var dateFormated = ("0" + date.getHours()).slice(-2)  + ":" + 
+                                    ("0" + date.getMinutes()).slice(-2);
+                    allInterventions[i].find('#invisible'+i).prepend(
+                            '<div>Terminée le '+date.toLocaleDateString("en-GB")+" à "+dateFormated+'</div>'
                             +'<div>Commentaire : '+data.com+'</div>'
                             )
                 }
@@ -323,7 +366,7 @@ and open the template in the editor.
         function dateBoxChecked(element){
             if($(element).is(':checked')){
                 $('#chkTous').attr('checked', false);
-                document.getElementById('calendrier').style.display = 'block';
+                document.getElementById('calendrier').style.display = 'inline-block';
             }else{
                 document.getElementById('calendrier').style.display = 'none'
             }

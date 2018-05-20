@@ -9,32 +9,35 @@ and open the template in the editor.
         <title>Inscription - Proact'IF</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./css/firstStyle.css"/>
+        <link rel="stylesheet" href="css/styleInscription.css" />
     </head>
     <body>
+        <header>
+        <h1>Proact'IF</h1>
+        </header>
         <form id="formulaire" method="POST" action="./ActionServlet">
             <div>
                 <fieldset>
                     <legend>Inscription</legend>
-                    <div>Civilité : <input type="radio" name="Civilite" value="H" checked="checked"/>Monsieur
-                        <input type="radio" name="Civilite" value="F"/>Madame</div>
-                    <div><input name="action" type="hidden" value="signup" /></div>
-                    <div>Nom : <input type="text" name="Nom" required="required"/></div>
-                    <div>Prénom : <input type="text" name="Prenom" required="required"/></div>
-                    <div>Adresse email : <input type="email" name="Mail" required="required"/></div>
-                    <div>Téléphone : <input type="tel" name="Telephone" required="required"/></div>
-                    <div>Date de naissance : <input type="date" name="DateNaissance" required="required"/></div>
-                    <div>Ville : <input type="text" name="Ville" required="required"/></div>
-                    <div>Code postal : <input type="number" name="CodePostal" required="required"/></div>
-                    <div>Rue et numéro : <textarea name="Adresse" required="required"/></textarea></div>
-                    <div>Complément d'adresse : <textarea name="ComplementAdresse"></textarea></div>
-                    <div>Mot de passe : <input type="password" name="MotDePasse" id="MotDePasse" required="required"/></div>
-                    <div>Confirmation du mot de passe : <input type="password" name="ConfirmationMDP" required="required"/></div>
-                    <div><input type="checkbox" name="CGV" value="CGV" required="required"/>J'ai lu et j'accepte les Conditions Générales de Vente</div>
-                    <div><input type="checkbox" name="NotRobot" value="NotRobot" required="required"/>Je ne suis pas un robot</div>
-                    <div><input type="submit" value="Valider l'inscription"></div>
+                    <label for="description">Civilité : </label><input id='radio' type="radio" name="Civilite" value="H" checked="checked"/>Monsieur
+                        <input type="radio" name="Civilite" value="F"/>Madame<br/>
+                    <input name="action" type="hidden" value="signup" /><br/>
+                    <label for="description">Nom : </label><input type="text" name="Nom" required="required"/><br/>
+                    <label for="description">Prénom : </label><input type="text" name="Prenom" required="required"/><br/>
+                    <label for="description">Adresse email : </label><input type="email" name="Mail" required="required"/><br/>
+                    <label for="description">Téléphone : </label><input type="tel" name="Telephone" required="required"/><br/>
+                    <label for="description">Date de naissance : </label><input type="date" name="DateNaissance" required="required"/><br/>
+                    <label for="description">Ville : </label><input type="text" name="Ville" required="required"/><br/>
+                    <label for="description">Code postal : </label><input type="number" name="CodePostal" required="required"/><br/>
+                    <label for="description">Rue et numéro : </label><textarea name="Adresse" required="required"/></textarea><br/>
+                    <label for="description">Complément d'adresse : </label><textarea name="ComplementAdresse"></textarea><br/>
+                    <label for="description">Mot de passe : </label><input type="password" name="MotDePasse" id="MotDePasse" required="required"/><br/>
+                    <label for="description">Confirmation du mot de passe : </label><input type="password" name="ConfirmationMDP" required="required"/><br/>
+                    <input type="checkbox" name="CGV" value="CGV" required="required"/>J'ai lu et j'accepte les Conditions Générales de Vente<br/>
+                    <input type="checkbox" name="NotRobot" value="NotRobot" required="required"/>Je ne suis pas un robot<br/>
+                    <input type="submit" value="Valider l'inscription"><br/>
                 </fieldset>
-            </div>
+            <br/>
         </form>
         <script src="http://code.jquery.com/jquery.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
@@ -62,7 +65,7 @@ and open the template in the editor.
                             if(document.getElementById('errorField')){
                                 $("#errorField").html("<fieldset>"+data.error+"</fieldset>");
                             }else {
-                                $("#formulaire").prepend("<div id='errorField'><fieldset>"+data.error+"</fieldset></div>");
+                                $("#formulaire").prepend("<div id='errorField'><fieldset>"+data.error+"</fieldset><br/>");
                             }
                         }
                     });
