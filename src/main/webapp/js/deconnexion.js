@@ -15,5 +15,7 @@ function deco()
     }).done(function(){
         window.location = "./connexion.html";
     })
+    //window.location = "./connexion.html";
+    window.location.replace("./connexion.html");
 }
 

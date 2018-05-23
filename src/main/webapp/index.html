@@ -3,15 +3,25 @@
     <head>
         <title>Accueil - Proactif</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./css/styleIndex.css"/>
+        <link rel="stylesheet" href="./css/styleHeaderFooter.css"/>
     </head>
     <body>
         <h1>Bienvenue sur Proact'IF, la conciergerie agile et écologique !</h1>
-        <a href="connexion.html"><input type="button" value="Connexion"/></a>
-        <a href="inscription.html"><input type="button" value="Inscription"/></a>
-        <p>Bon OK c'est chiant...</p>
-        <a href="loremipsum.html">Accueil</a>
+        <div id="menu">
+                <a href="connexion.html"><button style="">Connexion</button></a><a href="inscription.html"><button>Inscription</button></a>
+        </div>
+        <div>
+            Ce n'est pas vous ?
+            <a href='#' onclick='javascript:deco();'>Déconnexion</a>
+        </div>
+        <p>Présentation</p>
+        <footer>
+        <a href="index.html">Accueil</a>
         <a href="loremipsum.html">A propos de Proact'IF</a>
         <a href="loremipsum.html">Mentions légales</a>
         <a href="loremipsum.html">CGV</a>
+        </footer>
+        <script src="js/deconnexion.js"></script>
     </body>
 </html>

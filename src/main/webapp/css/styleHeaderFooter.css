@@ -21,7 +21,28 @@ and open the template in the editor.
 #menu button{
     width:200px;
 }                        
-h1{
+h1 .head{
     display:inline-block;
 }
-                        
+
+footer
+{
+    text-align:center;
+    position: fixed;
+    bottom:10px;
+    width:100%;
+    display:inline-block;
+    vertical-align:top;
+}
+
+footer a
+{
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+footer a:not(:first-child)
+{
+    border-style: solid;
+    border-width: 0px 0px 0px 1px;
+}

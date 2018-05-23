@@ -1,0 +1,59 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 23 mai 2018, 21:31:08
+    Author     : Michel
+*/
+
+h1
+{
+    cursor: pointer;
+    width:5em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+fieldset
+{
+    text-align: center;
+    width:18em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom:0.5em;
+    border:2px solid;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;	
+    border-radius:8px;	
+}
+
+.champ
+{
+    width:22em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom:1em;
+}
+
+.submit
+{
+    width:10em;
+    margin-left: 6em;
+    margin-right: auto;
+    margin-bottom:1em;
+}
+
+.pasEncore
+{
+    width:15em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#errorField fieldset
+{
+    background-color: red;
+}
+
